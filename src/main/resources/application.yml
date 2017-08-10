@@ -1,0 +1,14 @@
+
+spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/whoisspy
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp
+      suffix: .jsp
+
+server:
+  port: 8087

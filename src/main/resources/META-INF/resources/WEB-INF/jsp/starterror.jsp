@@ -11,7 +11,7 @@
     <input type="button" value="return" onclick="back()"/>
     <script type="application/javascript">
         var back = function () {
-            var url = "http://10.206.20.20:8087/back?roomToken=" + "${room.roomToken}";
+            var url = "http://localhost:8087/back?roomToken=" + "${room.roomToken}";
             window.open(url, "_self");
         }
     </script>

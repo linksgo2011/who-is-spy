@@ -12,7 +12,7 @@
     <script type="application/javascript">
         var join = function () {
             var name = document.getElementById("username").value;
-            var url = "http://10.206.20.20:8087/login?name=" + name + "&roomToken=" +"${room.roomToken}";
+            var url = "http://localhost:8087/login?name=" + name + "&roomToken=" +"${room.roomToken}";
             window.open(url, "_self");
         }
     </script>

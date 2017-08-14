@@ -4,7 +4,7 @@ var onCreate = function () {
         var element = document.getElementById("name");
         element.appendChild(document.createTextNode("please input your name"))
     } else {
-        var url = "http://10.206.20.20:8087/new?name=" + name;
+        var url = "http://localhost:8087/new?name=" + name;
         window.open(url,"_self");
     }
 }

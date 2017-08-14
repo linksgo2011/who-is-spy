@@ -18,7 +18,7 @@
         <input type="button" value="refresh" onclick="refresh()">
         <script type="application/javascript">
             var refresh = function () {
-                var url = "http://10.206.20.20:8087/refresh?roomToken="+"${room.roomToken}";
+                var url = "http://localhost:8087/refresh?roomToken="+"${room.roomToken}";
                 window.open(url,"_self");
             }
 
@@ -35,12 +35,12 @@
         </table>
     </div>
     <div>
-        <a target="_self" href="http://10.206.20.20:8087/start?token=${room.roomToken}">start</a>
+        <a target="_self" href="http://localhost:8087/start?token=${room.roomToken}">start</a>
         <c:if test="${room.status!='voting'}">
-            <a target="_self" id="votea" href="http://10.206.20.20:8087/startVoting?token=${room.roomToken}">vote</a>
+            <a target="_self" id="votea" href="http://localhost:8087/startVoting?token=${room.roomToken}">vote</a>
         </c:if>
         <c:if test="${room.status=='voting'}">
-            <a target="_self" id="votea" href="http://10.206.20.20:8087/stopVoting?token=${room.roomToken}">stop
+            <a target="_self" id="votea" href="http://localhost:8087/stopVoting?token=${room.roomToken}">stop
                 vote</a>
         </c:if>
 

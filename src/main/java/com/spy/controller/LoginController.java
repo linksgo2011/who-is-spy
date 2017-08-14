@@ -122,7 +122,7 @@ public class LoginController {
         }
         Room newRoom = new Room();
         String roomToken = RandomStringUtils.random(8, "0123456789abcdefghijklmnopqrstuvwxyz");
-        String roomLink = "http://10.206.20.20:8087/room?roomToken=" + roomToken;
+        String roomLink = "http://localhost:8087/room?roomToken=" + roomToken;
         newRoom.setRoomLink(roomLink);
         newRoom.setRoomOwner(name);
         newRoom.setRoomToken(roomToken);

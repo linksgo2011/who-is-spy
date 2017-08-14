@@ -25,7 +25,7 @@ public class PlayerService {
 
     public void init() {
         Room room = new Room();
-        room.setRoomLink("http://10.206.20.20:8080/room?roomToken=123456");
+        room.setRoomLink("http://localhost:8080/room?roomToken=123456");
         room.setRoomOwner("idolice");
         room.setStatus("waiting");
         room.setRoomToken("123456");

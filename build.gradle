@@ -37,6 +37,8 @@ dependencies {
 
 	compile group: 'com.h2database', name: 'h2', version: '1.4.195'
 
+	compile("org.springframework.boot:spring-boot-devtools")
+
 	runtime('mysql:mysql-connector-java')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }

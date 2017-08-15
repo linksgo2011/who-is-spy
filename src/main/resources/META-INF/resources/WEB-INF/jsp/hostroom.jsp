@@ -51,8 +51,8 @@
             <table>
                 <c:forEach items="${votes}" var="vote">
                     <div>
-                        <span>${vote.name}</span>
-                        <span>${vote.vote}</span>
+                        <span>${vote.player}</span>
+                        <span>${vote.voteNumber}</span>
                     </div>
                 </c:forEach>
             </table>

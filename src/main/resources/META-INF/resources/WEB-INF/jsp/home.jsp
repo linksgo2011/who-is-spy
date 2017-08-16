@@ -1,13 +1,18 @@
 <%@ page language="java" import="java.util.*" pageEncoding="GB18030"%>
 <%@include file="header.jsp"%>
 
-<div>
-    <div class="top">
-        <img>
+<div class="container dir-ltr">
+    <div class="main-content">
+        <form action="/new" method="GET">
+            <div class="row">
+                <div class="six columns">
+                    <label for="roomName">New room</label>
+                    <input class="u-full-width" type="text" name="name" placeholder="Please type your room name" id="roomName">
+                </div>
+            </div>
+            <button class="button-primary">create</button>
+        </form>
     </div>
-    <input type="text" class="host" name="name"><span id="name">name</span>
-    <button class="create" type="button" onclick="onCreate()">new</button>
-    <script type="text/javascript" src="js/room.js"></script>
 </div>
 
 <%@include file="footer.jsp"%>

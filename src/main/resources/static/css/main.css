@@ -1,1 +1,7 @@
-body{background:#f00;}
+body{
+    padding-top: 3rem;
+}
+
+div.center{
+    text-align: center;
+}

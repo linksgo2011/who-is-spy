@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,13 +52,12 @@ public class HostController {
         return "home";
     }
 
-
     @RequestMapping(value = "/back", method = RequestMethod.GET)
     public ModelAndView backToHost(@RequestParam String roomToken) {
         return returnHostRoomInfo(roomToken);
     }
 
-    @RequestMapping(value = "/refresh", method = RequestMethod.GET)
+    @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
     public ModelAndView refreshPlayerList(@RequestParam String roomToken) {
         return returnHostRoomInfo(roomToken);
     }
@@ -107,35 +107,32 @@ public class HostController {
         return modelAndView;
 
     }
-    @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public ModelAndView createRoom(@RequestParam String name, HttpSession httpSession) {
+
+    @RequestMapping(value = "/new", method = RequestMethod.POST)
+    public String createRoom(
+            @RequestParam String name,
+            HttpSession httpSession,
+            HttpServletRequest httpServletRequest
+    ) {
         Room room = roomDao.findOneByRoomOwner(name);
-        ModelAndView modelAndView = new ModelAndView();
-        ModelMap modelMap = new ModelMap();
         if (room != null) {
-            modelMap.addAttribute("roomlink", room.getRoomLink());
-            List<Gamer> gamerList = gamerDao.findByRoom(room.getRoomToken());
-            modelMap.addAttribute("gamers", gamerList);
-            modelAndView.addAllObjects(modelMap);
-            modelAndView.setViewName("hostroom");
-            return modelAndView;
+            return "redirect:/dashboard?roomToken="+room.getRoomToken();
         }
+
         Room newRoom = new Room();
+        // TODO room token should be a UUID in database
         String roomToken = RandomStringUtils.random(8, "0123456789abcdefghijklmnopqrstuvwxyz");
-        String roomLink = "http://localhost:8087/room?roomToken=" + roomToken;
+        String roomLink = getRoomLink(httpServletRequest, roomToken);
         newRoom.setRoomLink(roomLink);
         newRoom.setRoomOwner(name);
         newRoom.setRoomToken(roomToken);
         newRoom.setHostSession(httpSession.getId());
         newRoom.setStatus(Status.WAITING);
         roomDao.save(newRoom);
-        modelMap.addAttribute("room", newRoom);
-        List<Gamer> gamerList = gamerDao.findByRoom(roomToken);
-        modelMap.addAttribute("gamers", gamerList);
-        modelAndView.addAllObjects(modelMap);
-        modelAndView.setViewName("hostroom");
-        return modelAndView;
+
+        return "redirect:/dashboard?roomToken="+roomToken;
     }
+
     @RequestMapping(value = "/stopVoting", method = RequestMethod.GET)
     public ModelAndView stopVoting(@RequestParam String token) {
         Room room = roomDao.findOneByRoomToken(token);
@@ -157,6 +154,19 @@ public class HostController {
         modelAndView.addAllObjects(modelMap);
         modelAndView.setViewName("hostroom");
         return modelAndView;
+    }
+
+    /**
+     * @param httpServletRequest
+     * @param roomToken
+     * @return
+     */
+    private String getRoomLink(HttpServletRequest httpServletRequest, String roomToken) {
+        StringBuffer url = httpServletRequest.getRequestURL();
+        String uri = httpServletRequest.getRequestURI();
+        String host = url.substring(0, url.indexOf(uri));
+
+        return host + "/room?roomToken=" + roomToken;
     }
 
     private ModelAndView returnHostRoomInfo(String roomToken) {

@@ -72,7 +72,7 @@
                     <button onclick="vote()">vote</button>
                     <script type="application/javascript">
                         var vote = function () {
-                            var url = "http://localhost:8087/vote?voter=" + "${player.gamer}" + "&voted=" + "${gamer.gamer}"+"&roomToken="+"${player.room}";
+                            var url = "http://localhost:8087/vote?voter="+"${player.gamer}"+"&voted=" + "${gamer.gamer}";
                             window.open(url, "_self");
                         }
                     </script>

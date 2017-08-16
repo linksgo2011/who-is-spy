@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="six columns">
                     <label for="roomName">New room</label>
-                    <input class="u-full-width" type="text" name="name" placeholder="Please type your room name" id="roomName">
+                    <input class="u-full-width" type="text" name="name" placeholder="Please type your name" id="roomName">
                 </div>
             </div>
             <button class="button-primary">create</button>

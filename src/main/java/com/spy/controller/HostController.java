@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -57,56 +58,6 @@ public class HostController {
         return returnHostRoomInfo(roomToken);
     }
 
-    @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
-    public ModelAndView refreshPlayerList(@RequestParam String roomToken) {
-        return returnHostRoomInfo(roomToken);
-    }
-
-    @RequestMapping(value = "/start", method = RequestMethod.GET)
-    public ModelAndView startGame(@RequestParam String token) {
-        ModelAndView modelAndView = new ModelAndView();
-        ModelMap modelMap = new ModelMap();
-        Room room = roomDao.findOneByRoomToken(token);
-        if (room == null) {
-            return new ModelAndView("error");
-        }
-        boolean result = gameService.asignWords(token);
-        if (!result) {
-            modelMap.addAttribute("room", room);
-            modelAndView.addAllObjects(modelMap);
-            modelAndView.setViewName("starterror");
-            return modelAndView;
-        }
-
-        List<Gamer> gamers = gamerDao.findByRoom(room.getRoomToken());
-        room.setStatus(Status.STARTED);
-        roomDao.save(room);
-        modelMap.addAttribute("gamers", gamers);
-        modelMap.addAttribute("room", room);
-        modelAndView.addAllObjects(modelMap);
-        modelAndView.setViewName("hostroom");
-        return modelAndView;
-    }
-
-    @RequestMapping(value = "/startVoting", method = RequestMethod.GET)
-    public ModelAndView startVoting(@RequestParam String token) {
-        Room room = roomDao.findOneByRoomToken(token);
-        if (room == null) {
-            return new ModelAndView("error");
-        }
-        roomDao.delete(room);
-        room.setStatus(Status.VOTING);
-        roomDao.save(room);
-        List<Gamer> gamers = gamerDao.findByRoom(room.getRoomToken());
-        ModelAndView modelAndView = new ModelAndView();
-        ModelMap modelMap = new ModelMap();
-        modelMap.addAttribute("gamers", gamers);
-        modelMap.addAttribute("room", room);
-        modelAndView.addAllObjects(modelMap);
-        modelAndView.setViewName("hostroom");
-        return modelAndView;
-
-    }
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public String createRoom(
@@ -133,27 +84,74 @@ public class HostController {
         return "redirect:/dashboard?roomToken="+roomToken;
     }
 
+    @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
+    public ModelAndView refreshPlayerList(@RequestParam String roomToken) {
+        return returnHostRoomInfo(roomToken);
+    }
+
     @RequestMapping(value = "/stopVoting", method = RequestMethod.GET)
-    public ModelAndView stopVoting(@RequestParam String token) {
+    public ModelAndView stopVoting(
+            @RequestParam String token,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request
+    ) {
         Room room = roomDao.findOneByRoomToken(token);
+        String referer = request.getHeader("Referer");
+
         if (room == null) {
-            return new ModelAndView("error");
+            redirectAttributes.addAttribute("flashSuccessMsg","Room can't be found!");
+            return new ModelAndView("redirect:"+ referer);
         }
-        roomDao.delete(room);
+
         room.setStatus(Status.STARTED);
         room.setShowVote(true);
         roomDao.save(room);
-        List<Vote> votes = (List<Vote>) voteDao.findAll();
-        List<Gamer> gamers = gamerDao.findByRoom(room.getRoomToken());
-        ModelAndView modelAndView = new ModelAndView();
-        ModelMap modelMap = new ModelMap();
-        modelMap.addAttribute("gamers", gamers);
-        modelMap.addAttribute("room", room);
-        modelMap.addAttribute("votes", votes);
-        modelMap.addAttribute("showVote", true);
-        modelAndView.addAllObjects(modelMap);
-        modelAndView.setViewName("hostroom");
-        return modelAndView;
+        return new ModelAndView("redirect:"+ referer);
+    }
+
+    @RequestMapping(value = "/start", method = RequestMethod.GET)
+    public ModelAndView startGame(
+            @RequestParam String token,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request
+    ) {
+        Room room = roomDao.findOneByRoomToken(token);
+        String referer = request.getHeader("Referer");
+
+        if (room == null) {
+            redirectAttributes.addAttribute("flashSuccessMsg","Room can't be found!");
+            return new ModelAndView("redirect:"+ referer);
+        }
+
+        boolean result = gameService.asignWords(token);
+        if (!result) {
+            redirectAttributes.addAttribute("flashSuccessMsg","Assign word failed!");
+            return new ModelAndView("redirect:"+ referer);
+        }
+        room.setStatus(Status.STARTED);
+        roomDao.save(room);
+
+        return new ModelAndView("redirect:"+ referer);
+    }
+
+    @RequestMapping(value = "/startVoting", method = RequestMethod.GET)
+    public ModelAndView startVoting(
+            @RequestParam String token,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request
+    ) {
+        Room room = roomDao.findOneByRoomToken(token);
+        String referer = request.getHeader("Referer");
+
+        if (room == null) {
+            redirectAttributes.addAttribute("flashSuccessMsg","Room can't be found!");
+            return new ModelAndView("redirect:"+ referer);
+        }
+
+        room.setStatus(Status.VOTING);
+        room.setShowVote(true);
+        roomDao.save(room);
+        return new ModelAndView("redirect:"+ referer);
     }
 
     /**

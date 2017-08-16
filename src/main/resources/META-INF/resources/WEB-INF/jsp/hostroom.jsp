@@ -3,20 +3,62 @@
 
 <div class="container dir-ltr">
     <div class="main-content">
+        <div class="welcome">Hello! ${room.roomOwner}</div>
+        <div class="alert">${flashSuccessMsg}</div>
+
+        <%-- TODO: display game status here --%>
         <h4 class="center">
-            Waiting For Players...
+            <c:choose>
+                <c:when test="${room.status == 'waiting'}">
+                    Waiting For Players...
+                </c:when>
+                <c:when test="${room.status == 'started'}">
+                    Game is in progress...
+                </c:when>
+                <c:when test="${room.status == 'voting'}">
+                    Gamer are voting...
+                </c:when>
+            </c:choose>
         </h4>
+
         <div class="center access-link">
             <span>ROOM LINK: </span>
             <input type="text" value="${room.roomLink}">
         </div>
         <hr>
-        <ol>
+
+        <%--<table class="u-full-width gamer-list">--%>
+            <%--<thead>--%>
+            <%--<tr>--%>
+                <%--<th>Order</th>--%>
+                <%--<th>Name</th>--%>
+                <%--<th>Word</th>--%>
+                <%--<th>Operation</th>--%>
+            <%--</tr>--%>
+            <%--</thead>--%>
+            <%--<tbody>--%>
+
+            <%--<c:forEach items="${gamers}" var="gamer">--%>
+                <%--<tr>--%>
+                    <%--<td></td>--%>
+                    <%--<td>${gamer.gamer}</td>--%>
+                    <%--<td>--%>
+                        <%--<c:if test="${room.status=='started'||room.status=='voting'}">--%>
+                            <%--<span class="word">${gamer.word}</span>--%>
+                        <%--</c:if>--%>
+                    <%--</td>--%>
+                    <%--<td>TODO</td>--%>
+                <%--</tr>--%>
+            <%--</c:forEach>--%>
+            <%--</tbody>--%>
+        <%--</table>--%>
+
+        <ol class="gamer-list">
             <c:forEach items="${gamers}" var="gamer">
                 <li>
-                    <span>${gamer.gamer}</span>
+                    <span class="username">${gamer.gamer}</span>
                     <c:if test="${room.status=='started'||room.status=='voting'}">
-                        <span>${gamer.word}</span>
+                        <span class="word">${gamer.word}</span>
                     </c:if>
                 </li>
             </c:forEach>
@@ -33,18 +75,18 @@
             </c:if>
         </div>
 
-        <c:if test="${showVote}">
+        <c:if test="${showVote && room.status == 'voting'}">
             <hr>
             <div>
-                <h3>Result</h3>
-                <table>
+                <h4>Vote Result</h4>
+                <ol>
                     <c:forEach items="${votes}" var="vote">
-                        <div>
-                            <span>${vote.player}</span>
+                        <li>
+                            <span>${vote.player}:</span>
                             <span>${vote.voteNumber}</span>
-                        </div>
+                        </li>
                     </c:forEach>
-                </table>
+                </ol>
             </div>
         </c:if>
     </div>

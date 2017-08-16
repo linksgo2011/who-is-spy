@@ -8,6 +8,7 @@ import com.spy.model.dao.RoomDao;
 import com.spy.model.dao.VoteDao;
 import com.spy.service.GameService;
 import com.spy.service.PlayerService;
+import com.spy.service.VoteService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,14 +30,16 @@ public class GamerController {
     RoomDao roomDao;
     VoteDao voteDao;
     GameService gameService;
+    VoteService voteService;
 
     @Autowired
-    public GamerController(GamerDao gamerDao, PlayerService playerService, RoomDao roomDao, VoteDao voteDao, GameService gameService) {
+    public GamerController(GamerDao gamerDao, PlayerService playerService, RoomDao roomDao, VoteDao voteDao, GameService gameService, VoteService voteService) {
         this.gamerDao = gamerDao;
         this.playerService = playerService;
         this.roomDao = roomDao;
         this.voteDao = voteDao;
         this.gameService = gameService;
+        this.voteService = voteService;
         playerService.init();
         gameService.initWords();
     }
@@ -67,33 +70,52 @@ public class GamerController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public ModelAndView createRoom(@RequestParam String name, HttpSession httpSession) {
-        Room room = roomDao.findOneByRoomOwner(name);
+    @RequestMapping(value = "/room", method = RequestMethod.GET)
+    public ModelAndView login(@RequestParam String roomToken, HttpServletRequest httpServletRequest) {
+        HttpSession httpSession = httpServletRequest.getSession();
+        List<Gamer> gamers = gamerDao.findBySession(httpSession.getId());
+        ModelMap modelMap = new ModelMap();
+        ModelAndView modelAndView = new ModelAndView();
+        Gamer gamer = new Gamer();
+
+        if (gamers.size() != 0) {
+            gamer = gamers.get(0);
+            if (roomToken.equals(gamer.getRoom())) {
+                gamers = gamerDao.findByRoom(roomToken);
+                modelMap.addAttribute("status", roomDao.findOneByRoomToken(roomToken).getStatus());
+                modelMap.addAttribute("gamer", gamer);
+                modelMap.addAttribute("gamers", gamers);
+                modelAndView.addAllObjects(modelMap);
+                modelAndView.setViewName("gamerroom");
+                return modelAndView;
+            }
+        }
+
+        Room room = roomDao.findOneByRoomToken(roomToken);
+        modelMap.addAttribute("room", room);
+        modelAndView.setViewName("join");
+        modelAndView.addAllObjects(modelMap);
+        return modelAndView;
+
+    }
+
+    @RequestMapping(value = "/vote", method = RequestMethod.GET)
+    public ModelAndView vote(@RequestParam String voter, @RequestParam String voted) {
+
         ModelAndView modelAndView = new ModelAndView();
         ModelMap modelMap = new ModelMap();
-        if (room != null) {
-            modelMap.addAttribute("roomlink", room.getRoomLink());
-            List<Gamer> gamerList = gamerDao.findByRoom(room.getRoomToken());
-            modelMap.addAttribute("gamers", gamerList);
-            modelAndView.addAllObjects(modelMap);
-            modelAndView.setViewName("hostroom");
-            return modelAndView;
-        }
-        Room newRoom = new Room();
-        String roomToken = RandomStringUtils.random(8, "0123456789abcdefghijklmnopqrstuvwxyz");
-        String roomLink = "http://localhost:8087/room?roomToken=" + roomToken;
-        newRoom.setRoomLink(roomLink);
-        newRoom.setRoomOwner(name);
-        newRoom.setRoomToken(roomToken);
-        newRoom.setHostSession(httpSession.getId());
-        newRoom.setStatus(Status.WAITING);
-        roomDao.save(newRoom);
-        modelMap.addAttribute("room", newRoom);
-        List<Gamer> gamerList = gamerDao.findByRoom(roomToken);
-        modelMap.addAttribute("gamers", gamerList);
+
+        voteService.vote(voter, voted);
+
+        Gamer gamer = gamerDao.findOneByGamer(voter);
+        Room room = roomDao.findOneByRoomToken(gamer.getRoom());
+
+        List<Gamer> gamers = gamerDao.findByRoom(room.getRoomToken());
+        modelMap.addAttribute("player", voter);
+        modelMap.addAttribute("gamers", gamers);
+        modelMap.addAttribute("status", room.getStatus());
         modelAndView.addAllObjects(modelMap);
-        modelAndView.setViewName("hostroom");
+        modelAndView.setViewName("gamerroom");
         return modelAndView;
     }
 }

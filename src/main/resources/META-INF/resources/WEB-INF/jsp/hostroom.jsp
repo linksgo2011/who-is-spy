@@ -27,7 +27,7 @@
             <c:forEach items="${gamers}" var="gamer">
                 <div>
                     <span>${gamer.gamer}</span>
-                    <c:if test="${room.status=='started'}">
+                    <c:if test="${room.status=='started'||room.status=='voting'}">
                         <span>${gamer.word}</span>
                     </c:if>
                 </div>

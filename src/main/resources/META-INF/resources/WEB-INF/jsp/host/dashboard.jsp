@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@include file="../header.jsp"%>
 
-<div class="container dir-ltr">
+<div class="container dir-ltr" id="container" enableRefresh="true">
     <div class="main-content">
         <div class="alert">${flashSuccessMsg}</div>
 

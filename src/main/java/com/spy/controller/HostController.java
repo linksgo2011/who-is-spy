@@ -99,7 +99,7 @@ public class HostController {
         String referer = request.getHeader("Referer");
 
         if (room == null) {
-            redirectAttributes.addAttribute("flashSuccessMsg","Room can't be found!");
+            redirectAttributes.addFlashAttribute("flashSuccessMsg","Room can't be found!");
             return new ModelAndView("redirect:"+ referer);
         }
 
@@ -119,13 +119,13 @@ public class HostController {
         String referer = request.getHeader("Referer");
 
         if (room == null) {
-            redirectAttributes.addAttribute("flashSuccessMsg","Room can't be found!");
+            redirectAttributes.addFlashAttribute("flashSuccessMsg","Room can't be found!");
             return new ModelAndView("redirect:"+ referer);
         }
 
         boolean result = gameService.asignWords(token);
         if (!result) {
-            redirectAttributes.addAttribute("flashSuccessMsg","Assign word failed!");
+            redirectAttributes.addFlashAttribute("flashSuccessMsg","Assign word failed!");
             return new ModelAndView("redirect:"+ referer);
         }
         room.setStatus(Status.STARTED);
@@ -144,7 +144,7 @@ public class HostController {
         String referer = request.getHeader("Referer");
 
         if (room == null) {
-            redirectAttributes.addAttribute("flashSuccessMsg","Room can't be found!");
+            redirectAttributes.addFlashAttribute("flashSuccessMsg","Room can't be found!");
             return new ModelAndView("redirect:"+ referer);
         }
 

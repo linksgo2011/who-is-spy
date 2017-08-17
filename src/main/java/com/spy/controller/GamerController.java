@@ -46,7 +46,13 @@ public class GamerController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView doLogin(@RequestParam String name, @RequestParam String roomToken, HttpServletRequest httpServletRequest) {
+    public ModelAndView doLogin(@RequestParam String name, @RequestParam String roomToken, HttpServletRequest httpServletRequest) throws NotFoundException {
+
+        Room room = roomDao.findOneByRoomToken(roomToken);
+        if(room == null){
+            throw new NotFoundException("can't find room");
+        }
+
         HttpSession httpSession = httpServletRequest.getSession();
         Gamer gamer = playerService.ifUserAlreadyLogin(name);
 
@@ -63,11 +69,7 @@ public class GamerController {
     }
 
     @RequestMapping(value = "/join", method = RequestMethod.GET)
-    public ModelAndView join(@RequestParam String roomToken, HttpServletRequest httpServletRequest) throws NotFoundException {
-        Room room = roomDao.findOneByRoomToken(roomToken);
-        if(room == null){
-            throw new NotFoundException("can't find room");
-        }
+    public ModelAndView join(@RequestParam(value="roomToken",required = false) String roomToken, HttpServletRequest httpServletRequest) throws NotFoundException {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("roomToken",roomToken);
         modelAndView.setViewName("gamer/join");
@@ -94,7 +96,7 @@ public class GamerController {
         gamers = gamerDao.findByRoom(roomToken);
         modelMap.addAttribute("status", roomDao.findOneByRoomToken(roomToken).getStatus());
         modelMap.addAttribute("gamer", gamer);
-        modelMap.addAttribute("gamers", gamers);
+        modelMap.addAttribute("others", gamers);
         modelAndView.addAllObjects(modelMap);
         modelAndView.setViewName("gamer/room");
         return modelAndView;

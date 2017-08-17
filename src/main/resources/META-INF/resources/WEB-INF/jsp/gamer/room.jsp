@@ -2,11 +2,13 @@
 
 <div class="container dir-ltr">
     <div class="main-content">
+        <div class="alert">${flashSuccessMsg}</div>
+
         <div class="welcome">Hello! ${gamer.gamer}</div>
         <h4 class="center">Status:${status}</h4>
         <hr>
-        <ul>
-            <c:forEach items="${gamers}" var="gamer">
+        <ol>
+            <c:forEach items="${others}" var="gamer">
                 <li>
                     <span>${gamer.gamer}</span>
                     <c:if test="${status=='voting'}">
@@ -14,7 +16,7 @@
                             <button onclick="vote()">vote</button>
                             <script type="application/javascript">
                                 var vote = function () {
-                                    var url = "http://localhost:8087/vote?voter="+"${player.gamer}"+"&voted=" + "${gamer.gamer}";
+                                    var url = "/vote?voter="+"${player.gamer}"+"&voted=" + "${gamer.gamer}";
                                     window.open(url, "_self");
                                 }
                             </script>
@@ -22,8 +24,9 @@
                     </c:if>
                 </li>
             </c:forEach>
-        </ul>
+        </ol>
         <c:if test="${showResult==true}">
+            <hr>
             <div>
                 <ul>
                     <c:forEach items="${vote}" var="item">
@@ -38,7 +41,7 @@
         </c:if>
         <c:if test="${status=='started'}">
             <div>
-                your word is: ${player.word}
+                your word is: ${gamer.word}
             </div>
         </c:if>
     </div>

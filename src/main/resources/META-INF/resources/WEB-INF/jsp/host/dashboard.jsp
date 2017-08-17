@@ -3,9 +3,9 @@
 
 <div class="container dir-ltr">
     <div class="main-content">
-        <div class="welcome">Hello! ${room.roomOwner}</div>
         <div class="alert">${flashSuccessMsg}</div>
 
+        <div class="welcome">Hello! ${room.roomOwner}</div>
         <%-- TODO: display game status here --%>
         <h4 class="center">
             <c:choose>

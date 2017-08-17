@@ -9,3 +9,10 @@ body{
 .gamer-list .word{
     float: right;
 }
+
+.alert{
+    background: #CC3333;
+    color: #fff;
+    border-radius: 2px;
+    padding: 0 10px;
+}

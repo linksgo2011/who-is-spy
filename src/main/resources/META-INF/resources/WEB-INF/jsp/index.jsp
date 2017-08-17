@@ -8,7 +8,7 @@
             <hr>
             <div class="button-container">
                 <a class="button" href="/create">Create Room</a>
-                <a class="button" href="/login">Join Game</a>
+                <a class="button" href="/join">Join Game</a>
             </div>
         </div>
         <hr>

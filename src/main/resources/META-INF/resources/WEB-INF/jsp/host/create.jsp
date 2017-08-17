@@ -2,6 +2,8 @@
 
 <div class="container dir-ltr">
     <div class="main-content">
+        <div class="alert">${flashSuccessMsg}</div>
+
         <form action="/new" method="POST">
             <div class="row">
                 <div class="six columns">

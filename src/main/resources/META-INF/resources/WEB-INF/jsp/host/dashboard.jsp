@@ -6,7 +6,6 @@
         <div class="alert">${flashSuccessMsg}</div>
 
         <div class="welcome">Hello! ${room.roomOwner}</div>
-        <%-- TODO: display game status here --%>
         <h4 class="center">
             <c:choose>
                 <c:when test="${room.status == 'waiting'}">
@@ -23,6 +22,7 @@
 
         <div class="center access-link">
             <span>ROOM LINK: </span>
+            <%--TODO one click copy--%>
             <input type="text" value="${room.roomLink}">
         </div>
         <hr>
@@ -67,13 +67,12 @@
         <div class="center operation">
 
             <%-- TODO add confirm in case wrong operation--%>
-            <a class="button" target="_self" href="http://localhost:8087/start?token=${room.roomToken}">start game</a>
-
+            <a class="button" target="_self" href="/start?token=${room.roomToken}">start game</a>
             <c:if test="${room.status!='voting'}">
-                <a class="button" target="_self" id="votea" href="http://localhost:8087/startVoting?token=${room.roomToken}">start vote</a>
+                <a class="button" target="_self" id="votea" href="javascript:void(0)" onclick="confirm('are you sure start voting?')?window.location.href='/startVoting?token=${room.roomToken}':false">start vote</a>
             </c:if>
             <c:if test="${room.status=='voting'}">
-                <a class="button" target="_self" id="votea" href="http://localhost:8087/stopVoting?token=${room.roomToken}">stop vote</a>
+                <a class="button" target="_self" id="votea" href="/stopVoting?token=${room.roomToken}">stop vote</a>
             </c:if>
         </div>
 

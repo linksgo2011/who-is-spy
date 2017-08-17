@@ -45,9 +45,16 @@ public class GamerController {
         gameService.initWords();
     }
 
+    @RequestMapping(value = "/join", method = RequestMethod.GET)
+    public ModelAndView join(@RequestParam(value="roomToken",required = false) String roomToken, HttpServletRequest httpServletRequest) throws NotFoundException {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("roomToken",roomToken);
+        modelAndView.setViewName("gamer/join");
+        return modelAndView;
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView doLogin(@RequestParam String name, @RequestParam String roomToken, HttpServletRequest httpServletRequest) throws NotFoundException {
-
         Room room = roomDao.findOneByRoomToken(roomToken);
         if(room == null){
             throw new NotFoundException("can't find room");
@@ -68,13 +75,6 @@ public class GamerController {
         return new ModelAndView("redirect:/room?roomToken="+roomToken);
     }
 
-    @RequestMapping(value = "/join", method = RequestMethod.GET)
-    public ModelAndView join(@RequestParam(value="roomToken",required = false) String roomToken, HttpServletRequest httpServletRequest) throws NotFoundException {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("roomToken",roomToken);
-        modelAndView.setViewName("gamer/join");
-        return modelAndView;
-    }
 
     @RequestMapping(value = "/room", method = RequestMethod.GET)
     public ModelAndView room(@RequestParam String roomToken, HttpServletRequest httpServletRequest) throws Exception {
@@ -104,7 +104,7 @@ public class GamerController {
 
     @RequestMapping(value = "/vote", method = RequestMethod.GET)
     public ModelAndView vote(@RequestParam String voter, @RequestParam String voted) {
-
+        // TODO check room state and prevent double commit
         ModelAndView modelAndView = new ModelAndView();
         ModelMap modelMap = new ModelMap();
 

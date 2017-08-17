@@ -2,15 +2,17 @@
 
 <script>
     $(function () {
+        var $targetElement = $("#container");
+
         function refresh() {
             $.get(window.location.href,function (data) {
-                var $targetElement = $("#container");
-                if($targetElement.length && $targetElement.hasAttribute("enableRefresh")){
-                    $("#container").replaceWith($.parseHTML(data)[13]);
-                }
+                $("#container").replaceWith($.parseHTML(data)[13]);
             })
         }
-        setInterval(refresh,3000);
+
+        if($targetElement.length && $targetElement.attr("enableRefresh1")){
+            setInterval(refresh,3000);
+        }
     })
 </script>
 </body>

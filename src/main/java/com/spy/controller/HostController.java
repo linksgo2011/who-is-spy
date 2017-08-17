@@ -53,14 +53,8 @@ public class HostController {
         return "host/create";
     }
 
-    @RequestMapping(value = "/back", method = RequestMethod.GET)
-    public ModelAndView backToHost(@RequestParam String roomToken) {
-        return returnHostRoomInfo(roomToken);
-    }
-
-
-    @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public String createRoom(
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public String doCreateRoom(
             @RequestParam String name,
             HttpSession httpSession,
             HttpServletRequest httpServletRequest
@@ -89,32 +83,13 @@ public class HostController {
         return returnHostRoomInfo(roomToken);
     }
 
-    @RequestMapping(value = "/stopVoting", method = RequestMethod.GET)
-    public ModelAndView stopVoting(
-            @RequestParam String token,
-            RedirectAttributes redirectAttributes,
-            HttpServletRequest request
-    ) {
-        Room room = roomDao.findOneByRoomToken(token);
-        String referer = request.getHeader("Referer");
-
-        if (room == null) {
-            redirectAttributes.addFlashAttribute("flashSuccessMsg","Room can't be found!");
-            return new ModelAndView("redirect:"+ referer);
-        }
-
-        room.setStatus(Status.STARTED);
-        room.setShowVote(true);
-        roomDao.save(room);
-        return new ModelAndView("redirect:"+ referer);
-    }
-
     @RequestMapping(value = "/start", method = RequestMethod.GET)
     public ModelAndView startGame(
             @RequestParam String token,
             RedirectAttributes redirectAttributes,
             HttpServletRequest request
     ) {
+        // TODO stop use token for host
         Room room = roomDao.findOneByRoomToken(token);
         String referer = request.getHeader("Referer");
 
@@ -128,6 +103,8 @@ public class HostController {
             redirectAttributes.addFlashAttribute("flashSuccessMsg","Assign word failed!");
             return new ModelAndView("redirect:"+ referer);
         }
+
+        // TODO before save room we should check previous state
         room.setStatus(Status.STARTED);
         roomDao.save(room);
 
@@ -140,6 +117,8 @@ public class HostController {
             RedirectAttributes redirectAttributes,
             HttpServletRequest request
     ) {
+        // TODO stop use token for host
+
         Room room = roomDao.findOneByRoomToken(token);
         String referer = request.getHeader("Referer");
 
@@ -148,7 +127,31 @@ public class HostController {
             return new ModelAndView("redirect:"+ referer);
         }
 
+        // TODO before save room we should check previous state
         room.setStatus(Status.VOTING);
+        room.setShowVote(true);
+        roomDao.save(room);
+        return new ModelAndView("redirect:"+ referer);
+    }
+
+
+    @RequestMapping(value = "/stopVoting", method = RequestMethod.GET)
+    public ModelAndView stopVoting(
+            @RequestParam String token,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request
+    ) {
+        // TODO stop use token for host
+
+        Room room = roomDao.findOneByRoomToken(token);
+        String referer = request.getHeader("Referer");
+
+        if (room == null) {
+            redirectAttributes.addFlashAttribute("flashSuccessMsg","Room can't be found!");
+            return new ModelAndView("redirect:"+ referer);
+        }
+// TODO before save room we should check previous state
+        room.setStatus(Status.STARTED);
         room.setShowVote(true);
         roomDao.save(room);
         return new ModelAndView("redirect:"+ referer);
@@ -173,6 +176,9 @@ public class HostController {
         ModelAndView modelAndView = new ModelAndView();
         ModelMap modelMap = new ModelMap();
 
+        // TODO votes should add condition just limit to a room
+        List<Vote> votes = (List<Vote>) voteDao.findAll();
+        modelMap.addAttribute("votes", votes);
         modelMap.addAttribute("gamers", gamers);
         modelMap.addAttribute("room", room);
         modelAndView.addAllObjects(modelMap);

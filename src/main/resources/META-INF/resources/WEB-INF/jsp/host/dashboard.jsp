@@ -65,6 +65,8 @@
         </ol>
         <hr>
         <div class="center operation">
+
+            <%-- TODO add confirm in case wrong operation--%>
             <a class="button" target="_self" href="http://localhost:8087/start?token=${room.roomToken}">start game</a>
 
             <c:if test="${room.status!='voting'}">

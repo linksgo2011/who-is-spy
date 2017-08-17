@@ -5,6 +5,9 @@ spring:
     driverClassName: org.h2.Driver
     username: sa
     password:
+  jpa:
+      hibernate:
+        ddl-auto: create-drop
   mvc:
     view:
       prefix: /WEB-INF/jsp

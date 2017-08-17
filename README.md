@@ -4,5 +4,5 @@ A game for team building
 # how to run 
 
 - download h2 
-- run $ ./h2.sh 
-- ./gadlew bootrun
+- run `./h2.sh` 
+- `./gadlew bootrun`

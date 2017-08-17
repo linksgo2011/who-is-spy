@@ -8,11 +8,9 @@ import com.spy.model.dao.GamerDao;
 import com.spy.model.dao.RoomDao;
 import com.spy.model.dao.VoteDao;
 import com.spy.service.GameService;
-import com.spy.service.PlayerService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,7 +20,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,19 +29,16 @@ import java.util.List;
 public class HostController {
 
     GamerDao gamerDao;
-    PlayerService playerService;
     RoomDao roomDao;
     VoteDao voteDao;
     GameService gameService;
 
     @Autowired
-    public HostController(GamerDao gamerDao, PlayerService playerService, RoomDao roomDao, VoteDao voteDao, GameService gameService) {
+    public HostController(GamerDao gamerDao, RoomDao roomDao, VoteDao voteDao, GameService gameService) {
         this.gamerDao = gamerDao;
-        this.playerService = playerService;
         this.roomDao = roomDao;
         this.voteDao = voteDao;
         this.gameService = gameService;
-        playerService.init();
         gameService.initWords();
     }
 
@@ -61,7 +55,7 @@ public class HostController {
     ) {
         Room room = roomDao.findOneByRoomOwner(name);
         if (room != null) {
-            return "redirect:/dashboard?roomToken="+room.getRoomToken();
+            return "redirect:/dashboard?roomToken=" + room.getRoomToken();
         }
 
         Room newRoom = new Room();
@@ -75,7 +69,7 @@ public class HostController {
         newRoom.setStatus(Status.WAITING);
         roomDao.save(newRoom);
 
-        return "redirect:/dashboard?roomToken="+roomToken;
+        return "redirect:/dashboard?roomToken=" + roomToken;
     }
 
     @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
@@ -94,21 +88,21 @@ public class HostController {
         String referer = request.getHeader("Referer");
 
         if (room == null) {
-            redirectAttributes.addFlashAttribute("flashSuccessMsg","Room can't be found!");
-            return new ModelAndView("redirect:"+ referer);
+            redirectAttributes.addFlashAttribute("flashSuccessMsg", "Room can't be found!");
+            return new ModelAndView("redirect:" + referer);
         }
 
         boolean result = gameService.asignWords(token);
         if (!result) {
-            redirectAttributes.addFlashAttribute("flashSuccessMsg","Assign word failed!");
-            return new ModelAndView("redirect:"+ referer);
+            redirectAttributes.addFlashAttribute("flashSuccessMsg", "Assign word failed!");
+            return new ModelAndView("redirect:" + referer);
         }
 
         // TODO before save room we should check previous state
         room.setStatus(Status.STARTED);
         roomDao.save(room);
 
-        return new ModelAndView("redirect:"+ referer);
+        return new ModelAndView("redirect:" + referer);
     }
 
     @RequestMapping(value = "/startVoting", method = RequestMethod.GET)
@@ -123,15 +117,20 @@ public class HostController {
         String referer = request.getHeader("Referer");
 
         if (room == null) {
-            redirectAttributes.addFlashAttribute("flashSuccessMsg","Room can't be found!");
-            return new ModelAndView("redirect:"+ referer);
+            redirectAttributes.addFlashAttribute("flashSuccessMsg", "Room can't be found!");
+            return new ModelAndView("redirect:" + referer);
         }
 
         // TODO before save room we should check previous state
+        String status = room.getStatus();
+        if(status==Status.WAITING){
+            redirectAttributes.addFlashAttribute("flashSuccessMsg", "please start game first!");
+            return new ModelAndView("redirect:" + referer);
+        }
         room.setStatus(Status.VOTING);
         room.setShowVote(true);
         roomDao.save(room);
-        return new ModelAndView("redirect:"+ referer);
+        return new ModelAndView("redirect:" + referer);
     }
 
 
@@ -147,14 +146,14 @@ public class HostController {
         String referer = request.getHeader("Referer");
 
         if (room == null) {
-            redirectAttributes.addFlashAttribute("flashSuccessMsg","Room can't be found!");
-            return new ModelAndView("redirect:"+ referer);
+            redirectAttributes.addFlashAttribute("flashSuccessMsg", "Room can't be found!");
+            return new ModelAndView("redirect:" + referer);
         }
 // TODO before save room we should check previous state
         room.setStatus(Status.STARTED);
         room.setShowVote(true);
         roomDao.save(room);
-        return new ModelAndView("redirect:"+ referer);
+        return new ModelAndView("redirect:" + referer);
     }
 
     /**
@@ -177,6 +176,10 @@ public class HostController {
         ModelMap modelMap = new ModelMap();
 
         // TODO votes should add condition just limit to a room
+        if (room == null) {
+            modelAndView.setViewName("404");
+            return modelAndView;
+        }
         List<Vote> votes = (List<Vote>) voteDao.findAll();
         modelMap.addAttribute("votes", votes);
         modelMap.addAttribute("gamers", gamers);

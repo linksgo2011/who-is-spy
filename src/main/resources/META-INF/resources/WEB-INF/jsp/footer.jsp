@@ -10,7 +10,7 @@
             })
         }
 
-        if($targetElement.length && $targetElement.attr("enableRefresh1")){
+        if($targetElement.length && $targetElement.attr("enableRefresh")){
             setInterval(refresh,3000);
         }
     })

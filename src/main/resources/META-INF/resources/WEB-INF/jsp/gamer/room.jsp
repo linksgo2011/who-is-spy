@@ -4,7 +4,7 @@
     <div class="main-content">
         <div class="alert">${flashSuccessMsg}</div>
 
-        <div class="welcome">Hello! ${gamer.gamer}</div>
+        <div class="welcome">Hello! ${player.gamer}</div>
         <h4 class="center">Status:${status}</h4>
         <hr>
         <ol>
@@ -41,10 +41,10 @@
         </c:if>
         <c:if test="${status=='started'}">
             <div>
-                your word is: ${gamer.word}
+                your word is: ${player.word}
             </div>
         </c:if>
     </div>
 </div>
 
-<%@include file="../footer.jsp"%>
+<%--<%@include file="../footer.jsp"%>--%>

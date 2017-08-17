@@ -2,15 +2,12 @@ package com.spy.controller;
 
 import com.spy.model.Gamer;
 import com.spy.model.Room;
-import com.spy.model.Status;
 import com.spy.model.dao.GamerDao;
 import com.spy.model.dao.RoomDao;
 import com.spy.model.dao.VoteDao;
 import com.spy.service.GameService;
-import com.spy.service.PlayerService;
 import com.spy.service.VoteService;
 import javassist.NotFoundException;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -27,21 +24,18 @@ import java.util.List;
 public class GamerController {
 
     GamerDao gamerDao;
-    PlayerService playerService;
     RoomDao roomDao;
     VoteDao voteDao;
     GameService gameService;
     VoteService voteService;
 
     @Autowired
-    public GamerController(GamerDao gamerDao, PlayerService playerService, RoomDao roomDao, VoteDao voteDao, GameService gameService, VoteService voteService) {
+    public GamerController(GamerDao gamerDao, RoomDao roomDao, VoteDao voteDao, GameService gameService, VoteService voteService) {
         this.gamerDao = gamerDao;
-        this.playerService = playerService;
         this.roomDao = roomDao;
         this.voteDao = voteDao;
         this.gameService = gameService;
         this.voteService = voteService;
-        playerService.init();
         gameService.initWords();
     }
 
@@ -61,7 +55,7 @@ public class GamerController {
         }
 
         HttpSession httpSession = httpServletRequest.getSession();
-        Gamer gamer = playerService.ifUserAlreadyLogin(name);
+        Gamer gamer = gamerDao.findOneByGamer(name);
 
         if (gamer == null) {
             if (name == "") {
@@ -95,7 +89,7 @@ public class GamerController {
 
         gamers = gamerDao.findByRoom(roomToken);
         modelMap.addAttribute("status", roomDao.findOneByRoomToken(roomToken).getStatus());
-        modelMap.addAttribute("gamer", gamer);
+        modelMap.addAttribute("player", gamer);
         modelMap.addAttribute("others", gamers);
         modelAndView.addAllObjects(modelMap);
         modelAndView.setViewName("gamer/room");
@@ -118,7 +112,7 @@ public class GamerController {
         modelMap.addAttribute("gamers", gamers);
         modelMap.addAttribute("status", room.getStatus());
         modelAndView.addAllObjects(modelMap);
-        modelAndView.setViewName("gamerroom");
+        modelAndView.setViewName("gamer/room");
         return modelAndView;
     }
 }

@@ -9,6 +9,7 @@ import com.spy.model.dao.VoteDao;
 import com.spy.service.GameService;
 import com.spy.service.PlayerService;
 import com.spy.service.VoteService;
+import javassist.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,12 +45,10 @@ public class GamerController {
         gameService.initWords();
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView login(@RequestParam String name, @RequestParam String roomToken, HttpServletRequest httpServletRequest) {
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ModelAndView doLogin(@RequestParam String name, @RequestParam String roomToken, HttpServletRequest httpServletRequest) {
         HttpSession httpSession = httpServletRequest.getSession();
         Gamer gamer = playerService.ifUserAlreadyLogin(name);
-
-        Room room = roomDao.findOneByRoomToken(roomToken);
 
         if (gamer == null) {
             if (name == "") {
@@ -59,44 +58,46 @@ public class GamerController {
             gamer.setRoom(roomToken);
             gamerDao.save(gamer);
         }
-        List<Gamer> gamers = gamerDao.findByRoom(roomToken);
-        ModelMap modelMap = new ModelMap();
-        modelMap.addAttribute("status", room.getStatus());
-        modelMap.addAttribute("player", gamer);
-        modelMap.addAttribute("gamers", gamers);
+
+        return new ModelAndView("redirect:/room?roomToken="+roomToken);
+    }
+
+    @RequestMapping(value = "/join", method = RequestMethod.GET)
+    public ModelAndView join(@RequestParam String roomToken, HttpServletRequest httpServletRequest) throws NotFoundException {
+        Room room = roomDao.findOneByRoomToken(roomToken);
+        if(room == null){
+            throw new NotFoundException("can't find room");
+        }
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addAllObjects(modelMap);
-        modelAndView.setViewName("gamerroom");
+        modelAndView.addObject("roomToken",roomToken);
+        modelAndView.setViewName("gamer/join");
         return modelAndView;
     }
 
     @RequestMapping(value = "/room", method = RequestMethod.GET)
-    public ModelAndView login(@RequestParam String roomToken, HttpServletRequest httpServletRequest) {
+    public ModelAndView room(@RequestParam String roomToken, HttpServletRequest httpServletRequest) throws Exception {
         HttpSession httpSession = httpServletRequest.getSession();
         List<Gamer> gamers = gamerDao.findBySession(httpSession.getId());
         ModelMap modelMap = new ModelMap();
         ModelAndView modelAndView = new ModelAndView();
         Gamer gamer = new Gamer();
 
-        if (gamers.size() != 0) {
-            gamer = gamers.get(0);
-            if (roomToken.equals(gamer.getRoom())) {
-                gamers = gamerDao.findByRoom(roomToken);
-                modelMap.addAttribute("status", roomDao.findOneByRoomToken(roomToken).getStatus());
-                modelMap.addAttribute("gamer", gamer);
-                modelMap.addAttribute("gamers", gamers);
-                modelAndView.addAllObjects(modelMap);
-                modelAndView.setViewName("gamerroom");
-                return modelAndView;
-            }
+        if (gamers.size() == 0) {
+            return new ModelAndView("redirect:/join?roomToken="+roomToken);
         }
 
-        Room room = roomDao.findOneByRoomToken(roomToken);
-        modelMap.addAttribute("room", room);
-        modelAndView.setViewName("join");
-        modelAndView.addAllObjects(modelMap);
-        return modelAndView;
+        gamer = gamers.get(0);
+        if (!roomToken.equals(gamer.getRoom())) {
+            throw new Exception("room token is not equal");
+        }
 
+        gamers = gamerDao.findByRoom(roomToken);
+        modelMap.addAttribute("status", roomDao.findOneByRoomToken(roomToken).getStatus());
+        modelMap.addAttribute("gamer", gamer);
+        modelMap.addAttribute("gamers", gamers);
+        modelAndView.addAllObjects(modelMap);
+        modelAndView.setViewName("gamer/room");
+        return modelAndView;
     }
 
     @RequestMapping(value = "/vote", method = RequestMethod.GET)

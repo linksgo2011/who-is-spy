@@ -7,7 +7,7 @@
             <h4>Welcome to spy game!</h4>
             <hr>
             <div class="button-container">
-                <a class="button" href="/home">Create Room</a>
+                <a class="button" href="/create">Create Room</a>
                 <a class="button" href="/login">Join Game</a>
             </div>
         </div>

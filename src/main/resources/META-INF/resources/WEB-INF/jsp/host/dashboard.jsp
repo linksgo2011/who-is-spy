@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@include file="header.jsp"%>
+<%@include file="../header.jsp"%>
 
 <div class="container dir-ltr">
     <div class="main-content">
@@ -92,4 +92,4 @@
     </div>
 </div>
 
-<%@include file="footer.jsp"%>
+<%@include file="../footer.jsp"%>

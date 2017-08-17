@@ -48,9 +48,9 @@ public class HostController {
         gameService.initWords();
     }
 
-    @RequestMapping(value = "/home", method = RequestMethod.GET)
-    public String goHome() {
-        return "home";
+    @RequestMapping(value = "/create", method = RequestMethod.GET)
+    public String createRoom() {
+        return "host/create";
     }
 
     @RequestMapping(value = "/back", method = RequestMethod.GET)
@@ -85,7 +85,7 @@ public class HostController {
     }
 
     @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
-    public ModelAndView refreshPlayerList(@RequestParam String roomToken) {
+    public ModelAndView dashboard(@RequestParam String roomToken) {
         return returnHostRoomInfo(roomToken);
     }
 
@@ -176,7 +176,7 @@ public class HostController {
         modelMap.addAttribute("gamers", gamers);
         modelMap.addAttribute("room", room);
         modelAndView.addAllObjects(modelMap);
-        modelAndView.setViewName("hostroom");
+        modelAndView.setViewName("host/dashboard");
         return modelAndView;
     }
 }

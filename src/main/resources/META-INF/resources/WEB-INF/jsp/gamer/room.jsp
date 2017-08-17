@@ -1,6 +1,6 @@
 <%@include file="../header.jsp"%>
 
-<div class="container dir-ltr">
+<div class="container dir-ltr" id="container" enableRefresh="true">
     <div class="main-content">
         <div class="alert">${flashSuccessMsg}</div>
 

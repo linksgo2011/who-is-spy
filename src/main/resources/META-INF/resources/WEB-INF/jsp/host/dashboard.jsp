@@ -15,7 +15,7 @@
                     Game is in progress...
                 </c:when>
                 <c:when test="${room.status == 'voting'}">
-                    Gamer are voting...
+                    Gamers are voting...
                 </c:when>
             </c:choose>
         </h4>
@@ -93,4 +93,4 @@
     </div>
 </div>
 
-<%--<%@include file="../footer.jsp"%>--%>
+<%@include file="../footer.jsp"%>

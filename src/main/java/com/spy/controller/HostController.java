@@ -33,6 +33,8 @@ public class HostController {
     VoteDao voteDao;
     GameService gameService;
 
+    private String SESSION_KEY = "ROOM";
+
     @Autowired
     public HostController(GamerDao gamerDao, RoomDao roomDao, VoteDao voteDao, GameService gameService) {
         this.gamerDao = gamerDao;
@@ -55,7 +57,7 @@ public class HostController {
     ) {
         Room room = roomDao.findOneByRoomOwner(name);
         if (room != null) {
-            return "redirect:/dashboard?roomToken=" + room.getRoomToken();
+            return "redirect:/dashboard";
         }
 
         Room newRoom = new Room();
@@ -69,28 +71,26 @@ public class HostController {
         newRoom.setStatus(Status.WAITING);
         roomDao.save(newRoom);
 
-        return "redirect:/dashboard?roomToken=" + roomToken;
+        httpSession.setAttribute(SESSION_KEY,roomToken);
+
+        return "redirect:/dashboard";
     }
 
     @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
-    public ModelAndView dashboard(@RequestParam String roomToken) {
-        return returnHostRoomInfo(roomToken);
+    public ModelAndView dashboard(HttpSession httpSession) throws Exception {
+        Room room = getRoomFromSession(httpSession);
+        return returnHostRoomInfo(room);
     }
 
     @RequestMapping(value = "/start", method = RequestMethod.GET)
     public ModelAndView startGame(
             @RequestParam String token,
             RedirectAttributes redirectAttributes,
-            HttpServletRequest request
-    ) {
-        // TODO stop use token for host
-        Room room = roomDao.findOneByRoomToken(token);
+            HttpServletRequest request,
+            HttpSession httpSession
+    ) throws Exception {
+        Room room = getRoomFromSession(httpSession);
         String referer = request.getHeader("Referer");
-
-        if (room == null) {
-            redirectAttributes.addFlashAttribute("flashSuccessMsg", "Room can't be found!");
-            return new ModelAndView("redirect:" + referer);
-        }
 
         boolean result = gameService.asignWords(token);
         if (!result) {
@@ -109,17 +109,13 @@ public class HostController {
     public ModelAndView startVoting(
             @RequestParam String token,
             RedirectAttributes redirectAttributes,
-            HttpServletRequest request
-    ) {
+            HttpServletRequest request,
+            HttpSession httpSession
+    ) throws Exception {
         // TODO stop use token for host
 
-        Room room = roomDao.findOneByRoomToken(token);
+        Room room = getRoomFromSession(httpSession);
         String referer = request.getHeader("Referer");
-
-        if (room == null) {
-            redirectAttributes.addFlashAttribute("flashSuccessMsg", "Room can't be found!");
-            return new ModelAndView("redirect:" + referer);
-        }
 
         // TODO before save room we should check previous state
         String status = room.getStatus();
@@ -138,22 +134,19 @@ public class HostController {
     public ModelAndView stopVoting(
             @RequestParam String token,
             RedirectAttributes redirectAttributes,
-            HttpServletRequest request
-    ) {
+            HttpServletRequest request,
+            HttpSession httpSession
+    ) throws Exception {
         // TODO stop use token for host
 
-        Room room = roomDao.findOneByRoomToken(token);
+        Room room = getRoomFromSession(httpSession);
         String referer = request.getHeader("Referer");
 
-        if (room == null) {
-            redirectAttributes.addFlashAttribute("flashSuccessMsg", "Room can't be found!");
-            return new ModelAndView("redirect:" + referer);
-        }
-// TODO before save room we should check previous state
+        // TODO before save room we should check previous state
         room.setStatus(Status.STARTED);
         room.setShowVote(true);
         roomDao.save(room);
-        return new ModelAndView("redirect:" + referer);
+        return new ModelAndView("redirect:"+ referer);
     }
 
     /**
@@ -169,17 +162,12 @@ public class HostController {
         return host + "/room?roomToken=" + roomToken;
     }
 
-    private ModelAndView returnHostRoomInfo(String roomToken) {
-        Room room = roomDao.findOneByRoomToken(roomToken);
-        List<Gamer> gamers = gamerDao.findByRoom(roomToken);
+    private ModelAndView returnHostRoomInfo(Room room) throws Exception {
+        List<Gamer> gamers = gamerDao.findByRoom(room.getRoomToken());
         ModelAndView modelAndView = new ModelAndView();
         ModelMap modelMap = new ModelMap();
 
         // TODO votes should add condition just limit to a room
-        if (room == null) {
-            modelAndView.setViewName("404");
-            return modelAndView;
-        }
         List<Vote> votes = (List<Vote>) voteDao.findAll();
         modelMap.addAttribute("votes", votes);
         modelMap.addAttribute("gamers", gamers);
@@ -187,5 +175,15 @@ public class HostController {
         modelAndView.addAllObjects(modelMap);
         modelAndView.setViewName("host/dashboard");
         return modelAndView;
+    }
+
+    private Room getRoomFromSession(HttpSession httpSession) throws Exception {
+        String roomToken = (String) httpSession.getAttribute(SESSION_KEY);
+        Room room = roomDao.findOneByRoomToken(roomToken);
+
+        if(room == null){
+            throw new Exception("token expired!");
+        }
+        return room;
     }
 }

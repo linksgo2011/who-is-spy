@@ -76,7 +76,7 @@
             </c:if>
         </div>
 
-        <c:if test="${showVote && room.status == 'voting'}">
+        <c:if test="${room.showVote}">
             <hr>
             <div>
                 <h4>Vote Result</h4>

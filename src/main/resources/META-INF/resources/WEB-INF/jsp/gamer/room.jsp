@@ -13,7 +13,7 @@
                     <span>${item.gamer}</span>
                     <c:if test="${status=='voting'}">
                         <c:if test="${!player.voted}">
-                            <a class="button" target="_self" href="/vote?voter=${player.gamer}&voted=${item.gamer}">vote</a>
+                            <a class="button" target="_self" href="/vote?roomToken=${room.roomToken}&voted=${item.gamer}">vote</a>
                         </c:if>
                     </c:if>
                 </li>

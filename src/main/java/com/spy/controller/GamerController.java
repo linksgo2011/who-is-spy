@@ -41,6 +41,14 @@ public class GamerController {
 
     @RequestMapping(value = "/join", method = RequestMethod.GET)
     public ModelAndView join(@RequestParam(value = "roomToken", required = false) String roomToken, HttpServletRequest httpServletRequest) throws NotFoundException {
+        HttpSession httpSession = httpServletRequest.getSession();
+        Gamer gamer = gamerDao.findOneBySessionAndRoom(httpSession.getId(),roomToken);
+
+        // if user is logged, redirect to room
+        if(gamer != null){
+            return new ModelAndView("redirect:/room?roomToken=" + roomToken);
+        }
+
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("roomToken", roomToken);
         modelAndView.setViewName("gamer/join");
@@ -48,14 +56,14 @@ public class GamerController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView doLogin(@RequestParam String name, @RequestParam String roomToken, HttpServletRequest httpServletRequest) throws NotFoundException {
+    public String doLogin(@RequestParam String name, @RequestParam String roomToken, HttpServletRequest httpServletRequest) throws NotFoundException {
         Room room = roomDao.findOneByRoomToken(roomToken);
         if (room == null) {
             throw new NotFoundException("can't find room");
         }
 
         HttpSession httpSession = httpServletRequest.getSession();
-        Gamer gamer = gamerDao.findOneByGamer(name);
+        Gamer gamer = gamerDao.findOneByGamerAndRoom(name,roomToken);
 
         if (gamer == null) {
             if (name == "") {
@@ -63,64 +71,55 @@ public class GamerController {
             }
             gamer = new Gamer(name, httpSession.getId());
             gamer.setRoom(roomToken);
-            gamerDao.save(gamer);
+        }else{
+            gamer.setSession(httpSession.getId());
         }
 
-        return new ModelAndView("redirect:/room?roomToken=" + roomToken);
+        gamerDao.save(gamer);
+        return "redirect:/room?roomToken=" + roomToken;
     }
 
-
     @RequestMapping(value = "/room", method = RequestMethod.GET)
-    public ModelAndView room(@RequestParam String roomToken, HttpServletRequest httpServletRequest) throws Exception {
+    public ModelAndView room(@RequestParam String roomToken, HttpServletRequest httpServletRequest, ModelAndView modelAndView) throws Exception {
         HttpSession httpSession = httpServletRequest.getSession();
-        List<Gamer> gamers = gamerDao.findBySession(httpSession.getId());
-        ModelMap modelMap = new ModelMap();
-        ModelAndView modelAndView = new ModelAndView();
-        Gamer gamer = new Gamer();
+        Gamer gamer = gamerDao.findOneBySessionAndRoom(httpSession.getId(),roomToken);
 
-        if (gamers.size() == 0) {
-            return new ModelAndView("redirect:/join?roomToken=" + roomToken);
+        List<Gamer> others = gamerDao.findByRoom(roomToken);
+        Room room = getRoom(roomToken);
+
+        if(gamer == null){
+            return new ModelAndView("redirect:/join?roomToken="+roomToken);
         }
 
-//        for (Gamer item : gamers) {
-//            if (roomToken.equals(item.getRoom())) {
-//                modelMap.addAttribute("status", roomDao.findOneByRoomToken(roomToken).getStatus());
-//                modelMap.addAttribute("player", item);
-//                gamers = gamerDao.findByRoom(roomToken);
-//                modelMap.addAttribute("others", gamers);
-//                modelAndView.addAllObjects(modelMap);
-//                modelAndView.setViewName("gamer/room");
-//                return modelAndView;
-//            }
-//        }
-        Gamer theOne = gamers.get(0);
+        modelAndView.addObject("status", room.getStatus());
+        modelAndView.addObject("player", gamer);
+        modelAndView.addObject ("others", others);
+        modelAndView.addObject ("room", room);
 
-        gamers = gamerDao.findByRoom(roomToken);
-        modelMap.addAttribute("status", roomDao.findOneByRoomToken(roomToken).getStatus());
-        modelMap.addAttribute("player", theOne);
-        modelMap.addAttribute("others", gamers);
-        modelAndView.addAllObjects(modelMap);
         modelAndView.setViewName("gamer/room");
         return modelAndView;
+    }
+
+    private Room getRoom(@RequestParam String roomToken) throws Exception {
+        Room room = roomDao.findOneByRoomToken(roomToken);
+
+        if(room == null){
+            throw new Exception("token expired!");
+        }
+        return room;
     }
 
     @RequestMapping(value = "/vote", method = RequestMethod.GET)
-    public ModelAndView vote(@RequestParam String voter, @RequestParam String voted) {
-        // TODO check room state and prevent double commit
-        ModelAndView modelAndView = new ModelAndView();
-        ModelMap modelMap = new ModelMap();
+    public String vote(@RequestParam String roomToken, @RequestParam String voted,HttpServletRequest httpServletRequest) {
+        HttpSession httpSession = httpServletRequest.getSession();
+        Gamer gamer = gamerDao.findOneBySessionAndRoom(httpSession.getId(),roomToken);
+        String referer = httpServletRequest.getHeader("Referer");
 
-        voteService.vote(voter, voted);
+        if(gamer == null){
+            return "redirect:/join?roomToken="+roomToken;
+        }
+        voteService.vote(gamer.getGamer(), voted);
 
-        Gamer gamer = gamerDao.findOneByGamer(voter);
-        Room room = roomDao.findOneByRoomToken(gamer.getRoom());
-
-        List<Gamer> gamers = gamerDao.findByRoom(room.getRoomToken());
-        modelMap.addAttribute("player", gamer);
-        modelMap.addAttribute("gamers", gamers);
-        modelMap.addAttribute("status", room.getStatus());
-        modelAndView.addAllObjects(modelMap);
-        modelAndView.setViewName("gamer/room");
-        return modelAndView;
+        return "redirect:"+referer;
     }
 }

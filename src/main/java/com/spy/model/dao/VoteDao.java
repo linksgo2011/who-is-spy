@@ -3,6 +3,7 @@ package com.spy.model.dao;
 import com.spy.model.Vote;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
 public interface VoteDao extends CrudRepository<Vote, Integer> {
     Vote findOneByPlayer(Integer player);
 
+    @Transactional
     Integer deleteAllByRoom(String roomToken);
 
     List<Vote> findAllByRoomOrderByVoteNumber(String roomToken);

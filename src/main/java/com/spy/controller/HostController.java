@@ -123,6 +123,7 @@ public class HostController {
         roomDao.save(room);
 
         voteDao.deleteAllByRoom(room.getRoomToken());
+        // TODO there is a bug. we need to reset the 'isVoted' for gamer as well
         return new ModelAndView("redirect:" + referer);
     }
 

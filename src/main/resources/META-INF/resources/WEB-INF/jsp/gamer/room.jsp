@@ -6,8 +6,8 @@
 
         <div class="welcome">Hello! ${player.gamer}</div>
         <h4 class="center">Status:${status}</h4>
-        <hr>
         <c:if test="${status=='started'}">
+            <hr>
             <h4 class="center">
                 your word is: ${player.word}
             </h4>

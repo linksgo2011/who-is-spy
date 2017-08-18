@@ -110,7 +110,7 @@ public class GamerController {
     }
 
     @RequestMapping(value = "/vote", method = RequestMethod.GET)
-    public String vote(@RequestParam String roomToken, @RequestParam String voted,HttpServletRequest httpServletRequest) {
+    public String vote(@RequestParam String roomToken, @RequestParam Integer voted,HttpServletRequest httpServletRequest) {
         HttpSession httpSession = httpServletRequest.getSession();
         Gamer gamer = gamerDao.findOneBySessionAndRoom(httpSession.getId(),roomToken);
         String referer = httpServletRequest.getHeader("Referer");
@@ -118,7 +118,7 @@ public class GamerController {
         if(gamer == null){
             return "redirect:/join?roomToken="+roomToken;
         }
-        voteService.vote(gamer.getGamer(), voted);
+        voteService.vote(gamer.getId(), voted, roomToken);
 
         return "redirect:"+referer;
     }

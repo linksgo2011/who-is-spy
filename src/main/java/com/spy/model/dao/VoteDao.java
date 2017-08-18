@@ -9,5 +9,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface VoteDao extends CrudRepository<Vote, Integer> {
-    Vote findOneByPlayer(String player);
+    Vote findOneByPlayer(Integer player);
+
+    Integer deleteAllByRoom(String roomToken);
 }

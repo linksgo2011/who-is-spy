@@ -22,18 +22,20 @@ public class VoteService {
     }
 
 
-    public boolean vote(String voter, String voted) {
-        Gamer gamerVoter = gamerDao.findOneByGamer(voter);
-        Gamer gamerBeenVoted = gamerDao.findOneByGamer(voted);
+    public boolean vote(Integer voterId, Integer votedId,String roomToken) {
+        Gamer gamerVoter = gamerDao.findOne(voterId);
+        Gamer gamerBeenVoted = gamerDao.findOne(votedId);
 
         if (gamerVoter == null | gamerBeenVoted == null) {
             return false;
         }
-        Vote vote = voteDao.findOneByPlayer(gamerBeenVoted.getGamer());
+
+        Vote vote = voteDao.findOneByPlayer(votedId);
         if (vote == null) {
             Vote newVote = new Vote();
-            newVote.setPlayer(gamerBeenVoted.getGamer());
+            newVote.setPlayer(votedId);
             newVote.setVoteNumber(1);
+            newVote.setRoom(roomToken);
             voteDao.save(newVote);
         } else {
             Integer number = vote.getVoteNumber() + 1;

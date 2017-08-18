@@ -14,13 +14,33 @@ public class Vote {
     private Long id;
 
     @Column(name = "player")
-    private String player;
+    private Integer player;
 
     @Column(name = "vote_number")
     private Integer voteNumber;
 
-    @Column(name="status")
-    private String status;
+    @Column(name = "room")
+    private String room;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "player",insertable=false,updatable = false)
+    private Gamer gamer;
+
+    public Gamer getGamer() {
+        return gamer;
+    }
+
+    public void setGamer(Gamer gamer) {
+        this.gamer = gamer;
+    }
+
+    public String getRoom() {
+        return room;
+    }
+
+    public void setRoom(String room) {
+        this.room = room;
+    }
 
     public Long getId() {
         return id;
@@ -30,11 +50,11 @@ public class Vote {
         this.id = id;
     }
 
-    public String getPlayer() {
+    public Integer getPlayer() {
         return player;
     }
 
-    public void setPlayer(String player) {
+    public void setPlayer(Integer player) {
         this.player = player;
     }
 
@@ -44,13 +64,5 @@ public class Vote {
 
     public void setVoteNumber(Integer voteNumber) {
         this.voteNumber = voteNumber;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }

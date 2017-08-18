@@ -13,26 +13,12 @@
                     <span>${item.gamer}</span>
                     <c:if test="${status=='voting'}">
                         <c:if test="${!player.voted}">
-                            <a class="button" target="_self" href="/vote?roomToken=${room.roomToken}&voted=${item.gamer}">vote</a>
+                            <a class="button" target="_self" href="/vote?roomToken=${room.roomToken}&voted=${item.id}">vote</a>
                         </c:if>
                     </c:if>
                 </li>
             </c:forEach>
         </ol>
-        <c:if test="${showResult==true}">
-            <hr>
-            <div>
-                <ul>
-                    <c:forEach items="${vote}" var="item">
-                        <li>
-                            <span>vote.player</span>
-                            <span>vote.voteNumber</span>
-                        </li>
-                    </c:forEach>
-
-                </ul>
-            </div>
-        </c:if>
         <c:if test="${status=='started'}">
             <div>
                 your word is: ${player.word}

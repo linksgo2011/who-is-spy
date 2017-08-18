@@ -107,7 +107,7 @@ public class HostController {
 
     @RequestMapping(value = "/startVoting", method = RequestMethod.GET)
     public ModelAndView startVoting(
-            @RequestParam String token,
+            @RequestParam String roomToken,
             RedirectAttributes redirectAttributes,
             HttpServletRequest request,
             HttpSession httpSession
@@ -124,8 +124,9 @@ public class HostController {
             return new ModelAndView("redirect:" + referer);
         }
         room.setStatus(Status.VOTING);
-        room.setShowVote(true);
         roomDao.save(room);
+
+        voteDao.deleteAllByRoom(room.getRoomToken());
         return new ModelAndView("redirect:" + referer);
     }
 
@@ -144,7 +145,6 @@ public class HostController {
 
         // TODO before save room we should check previous state
         room.setStatus(Status.STARTED);
-        room.setShowVote(true);
         roomDao.save(room);
         return new ModelAndView("redirect:"+ referer);
     }

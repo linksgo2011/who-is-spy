@@ -72,18 +72,18 @@
                 <a class="button" target="_self" id="votea" href="javascript:void(0)" onclick="confirm('are you sure start voting?')?window.location.href='/startVoting?token=${room.roomToken}':false">start vote</a>
             </c:if>
             <c:if test="${room.status=='voting'}">
-                <a class="button" target="_self" id="votea" href="/stopVoting?token=${room.roomToken}">stop vote</a>
+                <a class="button" target="_self" id="votea" href="/stopVoting?token=${room.roomToken}">next round</a>
             </c:if>
         </div>
 
-        <c:if test="${room.showVote}">
+        <c:if test="${room.status == 'voting'}">
             <hr>
             <div>
                 <h4>Vote Result</h4>
                 <ol>
                     <c:forEach items="${votes}" var="vote">
                         <li>
-                            <span>${vote.player}:</span>
+                            <span>${vote.gamer.gamer}:</span>
                             <span>${vote.voteNumber}</span>
                         </li>
                     </c:forEach>

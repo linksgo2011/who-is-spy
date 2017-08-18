@@ -28,14 +28,6 @@ public class Room {
     @Column(name="host_session")
     private String hostSession;
 
-    @Column(name = "showVote")
-    private boolean showVote = false;
-
-
-
-
-
-
     public Long getId() {
         return id;
     }
@@ -82,13 +74,5 @@ public class Room {
 
     public void setHostSession(String hostSession) {
         this.hostSession = hostSession;
-    }
-
-    public boolean isShowVote() {
-        return showVote;
-    }
-
-    public void setShowVote(boolean showVote) {
-        this.showVote = showVote;
     }
 }

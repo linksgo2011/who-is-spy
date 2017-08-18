@@ -129,13 +129,9 @@ public class HostController {
 
     @RequestMapping(value = "/stopVoting", method = RequestMethod.GET)
     public ModelAndView stopVoting(
-            @RequestParam String token,
-            RedirectAttributes redirectAttributes,
             HttpServletRequest request,
             HttpSession httpSession
     ) throws Exception {
-        // TODO stop use token for host
-
         Room room = getRoomFromSession(httpSession);
         String referer = request.getHeader("Referer");
 

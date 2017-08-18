@@ -8,18 +8,12 @@
         <h4 class="center">Status:${status}</h4>
         <hr>
         <ol>
-            <c:forEach items="${others}" var="gamer">
+            <c:forEach items="${others}" var="item">
                 <li>
-                    <span>${gamer.gamer}</span>
+                    <span>${item.gamer}</span>
                     <c:if test="${status=='voting'}">
                         <c:if test="${!player.voted}">
-                            <button onclick="vote()">vote</button>
-                            <script type="application/javascript">
-                                var vote = function () {
-                                    var url = "/vote?voter="+"${player.gamer}"+"&voted=" + "${gamer.gamer}";
-                                    window.open(url, "_self");
-                                }
-                            </script>
+                            <a class="button" target="_self" href="/vote?voter=${player.gamer}&voted=${item.gamer}">vote</a>
                         </c:if>
                     </c:if>
                 </li>

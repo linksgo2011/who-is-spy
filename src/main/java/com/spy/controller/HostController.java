@@ -111,12 +111,9 @@ public class HostController {
             HttpServletRequest request,
             HttpSession httpSession
     ) throws Exception {
-        // TODO stop use token for host
-
         Room room = getRoomFromSession(httpSession);
         String referer = request.getHeader("Referer");
 
-        // TODO before save room we should check previous state
         String status = room.getStatus();
         if(status==Status.WAITING){
             redirectAttributes.addFlashAttribute("flashSuccessMsg", "please start game first!");

@@ -40,9 +40,9 @@ public class GamerController {
     }
 
     @RequestMapping(value = "/join", method = RequestMethod.GET)
-    public ModelAndView join(@RequestParam(value="roomToken",required = false) String roomToken, HttpServletRequest httpServletRequest) throws NotFoundException {
+    public ModelAndView join(@RequestParam(value = "roomToken", required = false) String roomToken, HttpServletRequest httpServletRequest) throws NotFoundException {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("roomToken",roomToken);
+        modelAndView.addObject("roomToken", roomToken);
         modelAndView.setViewName("gamer/join");
         return modelAndView;
     }
@@ -50,7 +50,7 @@ public class GamerController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView doLogin(@RequestParam String name, @RequestParam String roomToken, HttpServletRequest httpServletRequest) throws NotFoundException {
         Room room = roomDao.findOneByRoomToken(roomToken);
-        if(room == null){
+        if (room == null) {
             throw new NotFoundException("can't find room");
         }
 
@@ -66,7 +66,7 @@ public class GamerController {
             gamerDao.save(gamer);
         }
 
-        return new ModelAndView("redirect:/room?roomToken="+roomToken);
+        return new ModelAndView("redirect:/room?roomToken=" + roomToken);
     }
 
 
@@ -79,17 +79,25 @@ public class GamerController {
         Gamer gamer = new Gamer();
 
         if (gamers.size() == 0) {
-            return new ModelAndView("redirect:/join?roomToken="+roomToken);
+            return new ModelAndView("redirect:/join?roomToken=" + roomToken);
         }
 
-        gamer = gamers.get(0);
-        if (!roomToken.equals(gamer.getRoom())) {
-            throw new Exception("room token is not equal");
-        }
+//        for (Gamer item : gamers) {
+//            if (roomToken.equals(item.getRoom())) {
+//                modelMap.addAttribute("status", roomDao.findOneByRoomToken(roomToken).getStatus());
+//                modelMap.addAttribute("player", item);
+//                gamers = gamerDao.findByRoom(roomToken);
+//                modelMap.addAttribute("others", gamers);
+//                modelAndView.addAllObjects(modelMap);
+//                modelAndView.setViewName("gamer/room");
+//                return modelAndView;
+//            }
+//        }
+        Gamer theOne = gamers.get(0);
 
         gamers = gamerDao.findByRoom(roomToken);
         modelMap.addAttribute("status", roomDao.findOneByRoomToken(roomToken).getStatus());
-        modelMap.addAttribute("player", gamer);
+        modelMap.addAttribute("player", theOne);
         modelMap.addAttribute("others", gamers);
         modelAndView.addAllObjects(modelMap);
         modelAndView.setViewName("gamer/room");
@@ -108,7 +116,7 @@ public class GamerController {
         Room room = roomDao.findOneByRoomToken(gamer.getRoom());
 
         List<Gamer> gamers = gamerDao.findByRoom(room.getRoomToken());
-        modelMap.addAttribute("player", voter);
+        modelMap.addAttribute("player", gamer);
         modelMap.addAttribute("gamers", gamers);
         modelMap.addAttribute("status", room.getStatus());
         modelAndView.addAllObjects(modelMap);

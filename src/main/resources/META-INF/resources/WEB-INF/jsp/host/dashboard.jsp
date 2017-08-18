@@ -65,12 +65,12 @@
         </ol>
         <hr>
         <div class="center operation">
-            <a class="button" target="_self" href="javascript:void(0)" onclick="confirm('are you sure start this game?')?window.location.href='/start':false;">start game</a>
+            <a class="button" target="_self" href="javascript:void(0)" onclick="confirm('Are you sure start this game?')?window.location.href='/start':false;">start game</a>
             <c:if test="${room.status!='voting'}">
-                <a class="button" target="_self" href="javascript:void(0)" onclick="confirm('are you sure start voting?')?window.location.href='/startVoting':false">start vote</a>
+                <a class="button" target="_self" href="javascript:void(0)" onclick="confirm('Are you sure start voting?')?window.location.href='/startVoting':false">start vote</a>
             </c:if>
             <c:if test="${room.status=='voting'}">
-                <a class="button" target="_self" href="javascript:void(0)" onclick="confirm('are you sure stop voting and continue game?')?window.location.href='/stopVoting':false">next round</a>
+                <a class="button" target="_self" href="javascript:void(0)" onclick="confirm('Are you sure stop voting and continue game?')?window.location.href='/stopVoting':false">next round</a>
             </c:if>
         </div>
 

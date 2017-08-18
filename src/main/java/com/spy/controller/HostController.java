@@ -28,10 +28,10 @@ import java.util.List;
 @Controller
 public class HostController {
 
-    GamerDao gamerDao;
-    RoomDao roomDao;
-    VoteDao voteDao;
-    GameService gameService;
+    private GamerDao gamerDao;
+    private RoomDao roomDao;
+    private VoteDao voteDao;
+    private GameService gameService;
 
     private String SESSION_KEY = "ROOM";
 
@@ -41,6 +41,7 @@ public class HostController {
         this.roomDao = roomDao;
         this.voteDao = voteDao;
         this.gameService = gameService;
+
         gameService.initWords();
     }
 
@@ -84,7 +85,6 @@ public class HostController {
 
     @RequestMapping(value = "/start", method = RequestMethod.GET)
     public ModelAndView startGame(
-            @RequestParam String token,
             RedirectAttributes redirectAttributes,
             HttpServletRequest request,
             HttpSession httpSession
@@ -92,7 +92,7 @@ public class HostController {
         Room room = getRoomFromSession(httpSession);
         String referer = request.getHeader("Referer");
 
-        boolean result = gameService.asignWords(token);
+        boolean result = gameService.asignWords(room.getRoomToken());
         if (!result) {
             redirectAttributes.addFlashAttribute("flashSuccessMsg", "Assign word failed!");
             return new ModelAndView("redirect:" + referer);
@@ -107,7 +107,6 @@ public class HostController {
 
     @RequestMapping(value = "/startVoting", method = RequestMethod.GET)
     public ModelAndView startVoting(
-            @RequestParam String roomToken,
             RedirectAttributes redirectAttributes,
             HttpServletRequest request,
             HttpSession httpSession
@@ -167,8 +166,7 @@ public class HostController {
         ModelAndView modelAndView = new ModelAndView();
         ModelMap modelMap = new ModelMap();
 
-        // TODO votes should add condition just limit to a room
-        List<Vote> votes = (List<Vote>) voteDao.findAll();
+        List<Vote> votes = (List<Vote>) voteDao.findAllByRoomOrderByVoteNumber(room.getRoomToken());
         modelMap.addAttribute("votes", votes);
         modelMap.addAttribute("gamers", gamers);
         modelMap.addAttribute("room", room);

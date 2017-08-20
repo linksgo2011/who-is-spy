@@ -71,7 +71,7 @@ public class HostController {
         newRoom.setStatus(Status.WAITING);
         roomDao.save(newRoom);
 
-        httpSession.setAttribute(SESSION_KEY,roomToken);
+        httpSession.setAttribute(SESSION_KEY, roomToken);
 
         return "redirect:/dashboard";
     }
@@ -107,7 +107,7 @@ public class HostController {
 
     @RequestMapping(value = "/startVoting", method = RequestMethod.GET)
     public ModelAndView startVoting(
-            @RequestParam String roomToken,
+            @RequestParam String token,
             RedirectAttributes redirectAttributes,
             HttpServletRequest request,
             HttpSession httpSession
@@ -119,11 +119,17 @@ public class HostController {
 
         // TODO before save room we should check previous state
         String status = room.getStatus();
-        if(status==Status.WAITING){
+        voteDao.deleteAll();
+        if (status == Status.WAITING) {
             redirectAttributes.addFlashAttribute("flashSuccessMsg", "please start game first!");
             return new ModelAndView("redirect:" + referer);
         }
         room.setStatus(Status.VOTING);
+        List<Gamer> gamers = gamerDao.findByRoom(room.getRoomToken());
+        for (Gamer item : gamers) {
+            item.setVoted(false);
+            gamerDao.save(item);
+        }
         roomDao.save(room);
 
         voteDao.deleteAllByRoom(room.getRoomToken());
@@ -146,7 +152,7 @@ public class HostController {
         // TODO before save room we should check previous state
         room.setStatus(Status.STARTED);
         roomDao.save(room);
-        return new ModelAndView("redirect:"+ referer);
+        return new ModelAndView("redirect:" + referer);
     }
 
     /**
@@ -181,7 +187,7 @@ public class HostController {
         String roomToken = (String) httpSession.getAttribute(SESSION_KEY);
         Room room = roomDao.findOneByRoomToken(roomToken);
 
-        if(room == null){
+        if (room == null) {
             throw new Exception("token expired!");
         }
         return room;

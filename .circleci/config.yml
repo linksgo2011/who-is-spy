@@ -1,0 +1,16 @@
+version: 2
+jobs:
+  build:
+
+    working_directory: ~/whoisspy
+
+    steps:
+
+      - checkout
+
+      - run: ./gradlew clean build
+
+      - run: ./gradlew jar
+
+      - store_artifacts:
+          path: target/who-is-spy.jar

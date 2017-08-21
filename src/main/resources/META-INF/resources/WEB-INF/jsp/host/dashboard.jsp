@@ -65,14 +65,12 @@
         </ol>
         <hr>
         <div class="center operation">
-
-            <%-- TODO add confirm in case wrong operation--%>
-            <a class="button" target="_self" href="/start?token=${room.roomToken}">start game</a>
+            <a class="button" target="_self" href="javascript:void(0)" onclick="confirm('Are you sure start this game?')?window.location.href='/start':false;">start game</a>
             <c:if test="${room.status!='voting'}">
-                <a class="button" target="_self" id="votea" href="javascript:void(0)" onclick="confirm('are you sure start voting?')?window.location.href='/startVoting?token=${room.roomToken}':false">start vote</a>
+                <a class="button" target="_self" href="javascript:void(0)" onclick="confirm('Are you sure start voting?')?window.location.href='/startVoting':false">start vote</a>
             </c:if>
             <c:if test="${room.status=='voting'}">
-                <a class="button" target="_self" id="votea" href="/stopVoting?token=${room.roomToken}">next round</a>
+                <a class="button" target="_self" href="javascript:void(0)" onclick="confirm('Are you sure stop voting and continue game?')?window.location.href='/stopVoting':false">next round</a>
             </c:if>
         </div>
 
@@ -83,8 +81,7 @@
                 <ol>
                     <c:forEach items="${votes}" var="vote">
                         <li>
-                            <span>${vote.gamer.gamer}:</span>
-                            <span>${vote.voteNumber}</span>
+                                ${vote.gamer.gamer} got ${vote.voteNumber} votes
                         </li>
                     </c:forEach>
                 </ol>

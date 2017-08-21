@@ -6,12 +6,18 @@
 
         <div class="welcome">Hello! ${player.gamer}</div>
         <h4 class="center">Status:${status}</h4>
+        <c:if test="${status=='started'}">
+            <hr>
+            <h4 class="center">
+                your word is: ${player.word}
+            </h4>
+        </c:if>
         <hr>
         <ol>
             <c:forEach items="${others}" var="item">
                 <li>
                     <span>${item.gamer}</span>
-                    <c:if test="${status=='voting'}">
+                    <c:if test="${status=='voting' && player.id != item.id}">
                         <c:if test="${!player.voted}">
                             <a class="button" target="_self" href="/vote?roomToken=${room.roomToken}&voted=${item.id}">vote</a>
                         </c:if>
@@ -19,11 +25,6 @@
                 </li>
             </c:forEach>
         </ol>
-        <c:if test="${status=='started'}">
-            <div>
-                your word is: ${player.word}
-            </div>
-        </c:if>
     </div>
 </div>
 

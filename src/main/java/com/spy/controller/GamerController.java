@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -110,7 +111,7 @@ public class GamerController {
     }
 
     @RequestMapping(value = "/vote", method = RequestMethod.GET)
-    public String vote(@RequestParam String roomToken, @RequestParam Integer voted,HttpServletRequest httpServletRequest) {
+    public String vote(@RequestParam String roomToken, @RequestParam Integer voted, HttpServletRequest httpServletRequest, RedirectAttributes redirectAttributes) {
         HttpSession httpSession = httpServletRequest.getSession();
         Gamer gamer = gamerDao.findOneBySessionAndRoom(httpSession.getId(),roomToken);
         String referer = httpServletRequest.getHeader("Referer");
@@ -118,6 +119,12 @@ public class GamerController {
         if(gamer == null){
             return "redirect:/join?roomToken="+roomToken;
         }
+
+        if(gamer.getId().equals(voted)){
+            redirectAttributes.addFlashAttribute("flashSuccessMsg", "You can't vote yourself!!");
+            return "redirect:"+referer;
+        }
+
         voteService.vote(gamer.getId(), voted, roomToken);
 
         return "redirect:"+referer;

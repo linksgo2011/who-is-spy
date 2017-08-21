@@ -41,7 +41,6 @@ public class HostController {
         this.roomDao = roomDao;
         this.voteDao = voteDao;
         this.gameService = gameService;
-
         gameService.initWords();
     }
 
@@ -72,7 +71,7 @@ public class HostController {
         newRoom.setStatus(Status.WAITING);
         roomDao.save(newRoom);
 
-        httpSession.setAttribute(SESSION_KEY,roomToken);
+        httpSession.setAttribute(SESSION_KEY, roomToken);
 
         return "redirect:/dashboard";
     }
@@ -120,10 +119,14 @@ public class HostController {
             return new ModelAndView("redirect:" + referer);
         }
         room.setStatus(Status.VOTING);
+        List<Gamer> gamers = gamerDao.findByRoom(room.getRoomToken());
+        for (Gamer item : gamers) {
+            item.setVoted(false);
+            gamerDao.save(item);
+        }
         roomDao.save(room);
 
         voteDao.deleteAllByRoom(room.getRoomToken());
-        // TODO there is a bug. we need to reset the 'isVoted' for gamer as well
         return new ModelAndView("redirect:" + referer);
     }
 
@@ -139,7 +142,7 @@ public class HostController {
         // TODO before save room we should check previous state
         room.setStatus(Status.STARTED);
         roomDao.save(room);
-        return new ModelAndView("redirect:"+ referer);
+        return new ModelAndView("redirect:" + referer);
     }
 
     /**
@@ -173,7 +176,7 @@ public class HostController {
         String roomToken = (String) httpSession.getAttribute(SESSION_KEY);
         Room room = roomDao.findOneByRoomToken(roomToken);
 
-        if(room == null){
+        if (room == null) {
             throw new Exception("token expired!");
         }
         return room;

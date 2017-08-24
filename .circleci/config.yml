@@ -20,5 +20,5 @@ jobs:
   deployment:
     prod:
       branch: master
-      commands:
+      steps:
       - ssh 13.58.222.23

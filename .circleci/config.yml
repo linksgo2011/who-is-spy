@@ -17,3 +17,8 @@ jobs:
 
       - store_artifacts:
           path: target/who-is-spy.jar
+  deployment:
+    prod:
+      branch: master
+      commands:
+      - ssh 13.58.222.23

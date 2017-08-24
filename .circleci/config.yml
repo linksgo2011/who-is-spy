@@ -17,4 +17,4 @@ jobs:
 
       - store_artifacts:
           path: target/who-is-spy.jar
-      - run: ssh 13.58.222.23
+

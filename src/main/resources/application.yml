@@ -19,4 +19,4 @@ spring:
       suffix: .jsp
 
 server:
-  port: 8087
+  port: 8086

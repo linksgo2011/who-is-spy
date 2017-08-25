@@ -11,6 +11,12 @@ buildscript {
 }
 
 apply plugin: 'java'
+apply plugin: 'war'
+war {
+	manifest {
+		attributes 'Main-Class': 'com.package.app.Class'
+	}
+}
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 

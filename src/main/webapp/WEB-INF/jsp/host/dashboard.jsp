@@ -1,6 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@include file="../header.jsp"%>
-
 <div class="container dir-ltr" id="container" enableRefresh="true">
     <div class="main-content">
         <div class="alert">${flashSuccessMsg}</div>
@@ -23,7 +22,21 @@
         <div class="center access-link">
             <span>ROOM LINK: </span>
             <%--TODO one click copy--%>
-            <input type="text" value="${room.roomLink}">
+            <input id="roomlink" type="text" value="${room.roomLink}">
+
+            <button class="btn"  data-clipboard-target="#roomlink">Copy</button>
+            <script type='text/javascript' src="https://cdn.staticfile.org/clipboard.js/1.5.15/clipboard.min.js"></script>
+            <script>
+                var clipboard = new Clipboard('.btn');
+                clipboard.on('success', function(e) {
+                    alert("success copy");
+
+                });
+                clipboard.on('error', function(e) {
+                   alert("failed copy");
+
+                });
+            </script>
         </div>
         <hr>
 

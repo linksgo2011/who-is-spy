@@ -8,7 +8,7 @@
             $.get(window.location.href, function (data) {
                 console.log($("#container",$($.parseHTML(data))));
 
-                $("#container").replaceWith($("#container",$($.parseHTML(data))));
+                $("#container").replaceWith($("#container",$($.parseHTML(data))).html());
             })
         }
 

@@ -19,6 +19,11 @@ public class Word {
     @Column(name = "option2")
     private String option2;
 
+    @Column(name = "roomId")
+    private Long roomId;
+
+
+
 
     public int getId() {
         return id;
@@ -42,5 +47,13 @@ public class Word {
 
     public void setOption2(String option2) {
         this.option2 = option2;
+    }
+
+    public Long getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
     }
 }

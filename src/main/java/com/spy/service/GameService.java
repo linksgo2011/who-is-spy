@@ -28,21 +28,23 @@ public class GameService {
 
     }
 
-    public boolean asignWords(String roomToken) {
-        List<Word> words = (List<Word>) wordDao.findAll();
-        if (words.size() == 0) {
-            return false;
-        }
-        int number = words.size();
-        Random random = new Random();
-        int index = random.nextInt(number) + 1;
-        Word word = wordDao.findOne(index);
+    public boolean asignWords(String roomToken,int wordId) {
+//        List<Word> words = (List<Word>) wordDao.findAll();
+//        if (words.size() == 0) {
+//            return false;
+//        }
+//        int number = words.size();
+//        Random random = new Random();
+//        int index = random.nextInt(number) + 1;
+//        Word word = wordDao.findOne(index);
         List<Gamer> gamers = gamerDao.findByRoom(roomToken);
         int playerNum = gamers.size();
 
         if (playerNum < 2) {
             return false;
         }
+        Random random = new Random();
+        Word word = wordDao.findOneById(wordId);
         int spy = random.nextInt(playerNum);
         Gamer gamer = gamers.get(spy);
         gamers.remove(spy);

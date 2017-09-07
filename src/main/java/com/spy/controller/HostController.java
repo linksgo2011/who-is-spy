@@ -1,12 +1,10 @@
 package com.spy.controller;
 
-import com.spy.model.Gamer;
-import com.spy.model.Room;
-import com.spy.model.Status;
-import com.spy.model.Vote;
+import com.spy.model.*;
 import com.spy.model.dao.GamerDao;
 import com.spy.model.dao.RoomDao;
 import com.spy.model.dao.VoteDao;
+import com.spy.model.dao.WordDao;
 import com.spy.service.GameService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +30,17 @@ public class HostController {
     private RoomDao roomDao;
     private VoteDao voteDao;
     private GameService gameService;
+    private WordDao wordDao;
 
     private String SESSION_KEY = "ROOM";
 
     @Autowired
-    public HostController(GamerDao gamerDao, RoomDao roomDao, VoteDao voteDao, GameService gameService) {
+    public HostController(GamerDao gamerDao, RoomDao roomDao, VoteDao voteDao, GameService gameService, WordDao wordDao) {
         this.gamerDao = gamerDao;
         this.roomDao = roomDao;
         this.voteDao = voteDao;
         this.gameService = gameService;
+        this.wordDao = wordDao;
         gameService.initWords();
     }
 
@@ -85,13 +85,14 @@ public class HostController {
     @RequestMapping(value = "/start", method = RequestMethod.GET)
     public ModelAndView startGame(
             RedirectAttributes redirectAttributes,
+            @RequestParam int wordId,
             HttpServletRequest request,
             HttpSession httpSession
     ) throws Exception {
         Room room = getRoomFromSession(httpSession);
         String referer = request.getHeader("Referer");
 
-        boolean result = gameService.asignWords(room.getRoomToken());
+        boolean result = gameService.asignWords(room.getRoomToken(),wordId);
         if (!result) {
             redirectAttributes.addFlashAttribute("flashSuccessMsg", "Assign word failed!");
             return new ModelAndView("redirect:" + referer);
@@ -114,7 +115,7 @@ public class HostController {
         String referer = request.getHeader("Referer");
 
         String status = room.getStatus();
-        if(status==Status.WAITING){
+        if (status == Status.WAITING) {
             redirectAttributes.addFlashAttribute("flashSuccessMsg", "please start game first!");
             return new ModelAndView("redirect:" + referer);
         }
@@ -145,6 +146,19 @@ public class HostController {
         return new ModelAndView("redirect:" + referer);
     }
 
+    @RequestMapping(value = "/addWord", method = RequestMethod.POST)
+    public String addNewWords(HttpServletRequest request, @RequestParam String word1, @RequestParam String word2) throws Exception {
+        HttpSession httpSession = request.getSession();
+        String token = (String) httpSession.getAttribute(SESSION_KEY);
+        Word word = new Word();
+        word.setOption1(word1);
+        word.setOption2(word2);
+        word.setRoomId(roomDao.findOneByRoomToken(token).getId());
+        wordDao.save(word);
+        return "redirect:/dashboard";
+    }
+
+
     /**
      * @param httpServletRequest
      * @param roomToken
@@ -162,9 +176,11 @@ public class HostController {
         List<Gamer> gamers = gamerDao.findByRoom(room.getRoomToken());
         ModelAndView modelAndView = new ModelAndView();
         ModelMap modelMap = new ModelMap();
-
+        List<Word> words = wordDao.findByRoomId(room.getId());
         List<Vote> votes = (List<Vote>) voteDao.findAllByRoomOrderByVoteNumber(room.getRoomToken());
+
         modelMap.addAttribute("votes", votes);
+        modelMap.addAttribute("words", words);
         modelMap.addAttribute("gamers", gamers);
         modelMap.addAttribute("room", room);
         modelAndView.addAllObjects(modelMap);
@@ -181,4 +197,5 @@ public class HostController {
         }
         return room;
     }
+
 }

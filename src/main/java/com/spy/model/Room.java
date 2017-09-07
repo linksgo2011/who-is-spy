@@ -16,17 +16,28 @@ public class Room {
     @Column(name = "room_owner")
     private String roomOwner;
 
-    @Column(name="room_link")
+    @Column(name = "room_link")
     private String roomLink;
 
-    @Column(name="room_token")
+    @Column(name = "room_token")
     private String roomToken;
 
     @Column(name = "status")
     private String status;
 
-    @Column(name="host_session")
+    @Column(name = "host_session")
     private String hostSession;
+
+    public String getCurrentWord() {
+        return currentWord;
+    }
+
+    public void setCurrentWord(String currentWord) {
+        this.currentWord = currentWord;
+    }
+
+    @Column(name = "current_word")
+    private String currentWord;
 
     public Long getId() {
         return id;

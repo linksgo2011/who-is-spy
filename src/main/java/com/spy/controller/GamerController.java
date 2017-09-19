@@ -43,10 +43,10 @@ public class GamerController {
     @RequestMapping(value = "/join", method = RequestMethod.GET)
     public ModelAndView join(@RequestParam(value = "roomToken", required = false) String roomToken, HttpServletRequest httpServletRequest) throws NotFoundException {
         HttpSession httpSession = httpServletRequest.getSession();
-        Gamer gamer = gamerDao.findOneBySessionAndRoom(httpSession.getId(),roomToken);
+        Gamer gamer = gamerDao.findOneBySessionAndRoom(httpSession.getId(), roomToken);
 
         // if user is logged, redirect to room
-        if(gamer != null){
+        if (gamer != null) {
             return new ModelAndView("redirect:/room?roomToken=" + roomToken);
         }
 
@@ -64,7 +64,7 @@ public class GamerController {
         }
 
         HttpSession httpSession = httpServletRequest.getSession();
-        Gamer gamer = gamerDao.findOneByGamerAndRoom(name,roomToken);
+        Gamer gamer = gamerDao.findOneByGamerAndRoom(name, roomToken);
 
         if (gamer == null) {
             if (name == "") {
@@ -72,7 +72,7 @@ public class GamerController {
             }
             gamer = new Gamer(name, httpSession.getId());
             gamer.setRoom(roomToken);
-        }else{
+        } else {
             gamer.setSession(httpSession.getId());
         }
 
@@ -83,19 +83,25 @@ public class GamerController {
     @RequestMapping(value = "/room", method = RequestMethod.GET)
     public ModelAndView room(@RequestParam String roomToken, HttpServletRequest httpServletRequest, ModelAndView modelAndView) throws Exception {
         HttpSession httpSession = httpServletRequest.getSession();
-        Gamer gamer = gamerDao.findOneBySessionAndRoom(httpSession.getId(),roomToken);
+        Gamer gamer = gamerDao.findOneBySessionAndRoom(httpSession.getId(), roomToken);
 
-        List<Gamer> others = gamerDao.findByRoom(roomToken);
+
+        List<Gamer> others = gamerDao.findByRoomAndStatus(roomToken, "active");
         Room room = getRoom(roomToken);
 
-        if(gamer == null){
-            return new ModelAndView("redirect:/join?roomToken="+roomToken);
+        if (gamer == null) {
+            return new ModelAndView("redirect:/join?roomToken=" + roomToken);
+        }
+        if (gamer.getStatus().equals("out")) {
+            modelAndView.addObject("gamerstatus", "out");
+        } else {
+            modelAndView.addObject("gamerstatus", "active");
         }
 
         modelAndView.addObject("status", room.getStatus());
         modelAndView.addObject("player", gamer);
-        modelAndView.addObject ("others", others);
-        modelAndView.addObject ("room", room);
+        modelAndView.addObject("others", others);
+        modelAndView.addObject("room", room);
 
         modelAndView.setViewName("gamer/room");
         return modelAndView;
@@ -104,7 +110,7 @@ public class GamerController {
     private Room getRoom(@RequestParam String roomToken) throws Exception {
         Room room = roomDao.findOneByRoomToken(roomToken);
 
-        if(room == null){
+        if (room == null) {
             throw new Exception("token expired!");
         }
         return room;
@@ -113,20 +119,20 @@ public class GamerController {
     @RequestMapping(value = "/vote", method = RequestMethod.GET)
     public String vote(@RequestParam String roomToken, @RequestParam Integer voted, HttpServletRequest httpServletRequest, RedirectAttributes redirectAttributes) {
         HttpSession httpSession = httpServletRequest.getSession();
-        Gamer gamer = gamerDao.findOneBySessionAndRoom(httpSession.getId(),roomToken);
+        Gamer gamer = gamerDao.findOneBySessionAndRoom(httpSession.getId(), roomToken);
         String referer = httpServletRequest.getHeader("Referer");
 
-        if(gamer == null){
-            return "redirect:/join?roomToken="+roomToken;
+        if (gamer == null) {
+            return "redirect:/join?roomToken=" + roomToken;
         }
 
-        if(gamer.getId().equals(voted)){
+        if (gamer.getId().equals(voted)) {
             redirectAttributes.addFlashAttribute("flashSuccessMsg", "You can't vote yourself!!");
-            return "redirect:"+referer;
+            return "redirect:" + referer;
         }
 
         voteService.vote(gamer.getId(), voted, roomToken);
 
-        return "redirect:"+referer;
+        return "redirect:" + referer;
     }
 }

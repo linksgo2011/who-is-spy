@@ -49,6 +49,9 @@ public class Gamer {
     @Column(name = "room")
     private String room;
 
+    @Column(name = "status")
+    private String status = "active";
+
     @Column(name = "voted")
     private boolean voted = false;
 
@@ -82,5 +85,13 @@ public class Gamer {
 
     public void setVoted(boolean voted) {
         this.voted = voted;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

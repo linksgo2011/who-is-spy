@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface WordDao extends CrudRepository<Word, Integer> {
+    Word findOneById(int id);
 }

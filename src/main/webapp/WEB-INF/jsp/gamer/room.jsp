@@ -6,6 +6,9 @@
 
         <div class="welcome">Hello! ${player.gamer}</div>
         <h4 class="center">Status:${status}</h4>
+        <c:if test="${gamerstatus =='out'}">
+            <h6>you are out!</h6>
+        </c:if>
         <c:if test="${status=='started'}">
             <hr>
             <h4 class="center">
@@ -18,7 +21,7 @@
                 <li>
                     <span>${item.gamer}</span>
                     <c:if test="${status=='voting' && player.id != item.id}">
-                        <c:if test="${!player.voted}">
+                        <c:if test="${!player.voted && gamerstatus != 'out'}">
                             <a class="button" target="_self" href="/vote?roomToken=${room.roomToken}&voted=${item.id}">vote</a>
                         </c:if>
                     </c:if>

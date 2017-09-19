@@ -90,7 +90,11 @@ public class HostController {
     ) throws Exception {
         Room room = getRoomFromSession(httpSession);
         String referer = request.getHeader("Referer");
-
+        List<Gamer> gamers = gamerDao.findByRoom(room.getRoomToken());
+        for (Gamer gamer : gamers) {
+            gamer.setStatus("active");
+            gamerDao.save(gamer);
+        }
         boolean result = gameService.asignWords(room.getRoomToken());
         if (!result) {
             redirectAttributes.addFlashAttribute("flashSuccessMsg", "Assign word failed!");
@@ -114,7 +118,7 @@ public class HostController {
         String referer = request.getHeader("Referer");
 
         String status = room.getStatus();
-        if(status==Status.WAITING){
+        if (status == Status.WAITING) {
             redirectAttributes.addFlashAttribute("flashSuccessMsg", "please start game first!");
             return new ModelAndView("redirect:" + referer);
         }
@@ -141,6 +145,7 @@ public class HostController {
 
         // TODO before save room we should check previous state
         room.setStatus(Status.STARTED);
+        gameService.oneGamerOut(room.getRoomToken());
         roomDao.save(room);
         return new ModelAndView("redirect:" + referer);
     }
@@ -159,11 +164,11 @@ public class HostController {
     }
 
     private ModelAndView returnHostRoomInfo(Room room) throws Exception {
-        List<Gamer> gamers = gamerDao.findByRoom(room.getRoomToken());
+        List<Gamer> gamers = gamerDao.findByRoomAndStatus(room.getRoomToken(), "active");
         ModelAndView modelAndView = new ModelAndView();
         ModelMap modelMap = new ModelMap();
 
-        List<Vote> votes = (List<Vote>) voteDao.findAllByRoomOrderByVoteNumber(room.getRoomToken());
+        List<Vote> votes = (List<Vote>) voteDao.findAllByRoomOrderByVoteNumberDesc(room.getRoomToken());
         modelMap.addAttribute("votes", votes);
         modelMap.addAttribute("gamers", gamers);
         modelMap.addAttribute("room", room);

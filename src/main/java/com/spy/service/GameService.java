@@ -61,13 +61,22 @@ public class GameService {
     }
 
     public void initWords() {
+        saveWord("Narinder","Sebastian");
+        saveWord("wine","beer");
+        saveWord("potato","tomato");
+        saveWord("bus","taxi");
+        saveWord("button","link");
+        saveWord("mac","ipad");
+        saveWord("Turbo Drop","roller coaster");
+        saveWord("balloon","bubble");
+        saveWord("beautiful","elegant");
+        saveWord("air","oxygen");
+        saveWord("crab","lobster");
+    }
+    private void saveWord(String option1, String option2){
         Word word = new Word();
-        word.setOption1("mother");
-        word.setOption2("father");
+        word.setOption1(option1);
+        word.setOption2(option2);
         wordDao.save(word);
-        Word word2 = new Word();
-        word2.setOption1("sister");
-        word2.setOption2("brother");
-        wordDao.save(word2);
     }
 }

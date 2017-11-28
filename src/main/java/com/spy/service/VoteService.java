@@ -31,15 +31,20 @@ public class VoteService {
         }
 
         Vote vote = voteDao.findOneByPlayer(votedId);
+
         if (vote == null) {
             Vote newVote = new Vote();
             newVote.setPlayer(votedId);
             newVote.setVoteNumber(1);
             newVote.setRoom(roomToken);
+            newVote.setVoters(gamerVoter.getGamer());
             voteDao.save(newVote);
         } else {
             Integer number = vote.getVoteNumber() + 1;
             vote.setVoteNumber(number);
+            String voters = vote.getVoters();
+            voters += (", "+gamerVoter.getGamer());
+            vote.setVoters(voters);
             voteDao.save(vote);
         }
         gamerVoter.setVoted(true);

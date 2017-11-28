@@ -94,7 +94,7 @@
                 <ol>
                     <c:forEach items="${votes}" var="vote">
                         <li>
-                                ${vote.gamer.gamer} got ${vote.voteNumber} votes
+                                ${vote.gamer.gamer} got ${vote.voteNumber} votes,  ${vote.voters} has voted
                         </li>
                     </c:forEach>
                 </ol>

@@ -22,6 +22,9 @@ public class Vote {
     @Column(name = "room")
     private String room;
 
+    @Column(name = "voters")
+    private String voters;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player",insertable=false,updatable = false)
     private Gamer gamer;
@@ -64,5 +67,13 @@ public class Vote {
 
     public void setVoteNumber(Integer voteNumber) {
         this.voteNumber = voteNumber;
+    }
+
+    public String getVoters() {
+        return voters;
+    }
+
+    public void setVoters(String voters) {
+        this.voters = voters;
     }
 }

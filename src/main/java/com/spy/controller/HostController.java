@@ -150,6 +150,14 @@ public class HostController {
         return new ModelAndView("redirect:" + referer);
     }
 
+    @RequestMapping(value = "/remove", method = RequestMethod.GET)
+    public ModelAndView removePerson(@RequestParam Integer player, @RequestParam String roomToken, HttpServletRequest request) throws Exception {
+        Gamer gamer = gamerDao.findOne(player);
+        String referer = request.getHeader("Referer");
+        gamerDao.delete(gamer);
+        return new ModelAndView("redirect:" + referer);
+    }
+
     /**
      * @param httpServletRequest
      * @param roomToken

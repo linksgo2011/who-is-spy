@@ -2,6 +2,7 @@ package com.spy.controller;
 
 import com.spy.model.Gamer;
 import com.spy.model.Room;
+import com.spy.model.Status;
 import com.spy.model.dao.GamerDao;
 import com.spy.model.dao.RoomDao;
 import com.spy.model.dao.VoteDao;
@@ -10,7 +11,6 @@ import com.spy.service.VoteService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,7 +49,9 @@ public class GamerController {
         if (gamer != null) {
             return new ModelAndView("redirect:/room?roomToken=" + roomToken);
         }
-
+        if(!roomDao.findOneByRoomToken(roomToken).getStatus().equals(Status.WAITING)){
+            return new ModelAndView("errors/401");
+        }
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("roomToken", roomToken);
         modelAndView.setViewName("gamer/join");

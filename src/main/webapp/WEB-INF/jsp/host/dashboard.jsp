@@ -73,6 +73,7 @@
                     <c:if test="${room.status=='started'||room.status=='voting'}">
                         <span class="word">${gamer.word}</span>
                     </c:if>
+                    <a class="button" target="_self" href="javascript:void(0)" onclick="confirm('Are you sure remove this player? please be careful to remove player because she or he maybe the spy')?window.location.href='/remove?player=${gamer.id}&roomToken=${room.roomToken}':false">remove</a>
                 </li>
             </c:forEach>
         </ol>

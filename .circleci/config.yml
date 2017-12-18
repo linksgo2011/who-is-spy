@@ -13,5 +13,5 @@ jobs:
 
       - run: ./gradlew clean build
 
-    post:
-      - mv build $CIRCLE_ARTIFACTS/build
+      - store_artifacts:
+          path: build

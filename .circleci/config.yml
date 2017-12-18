@@ -12,7 +12,5 @@ jobs:
       - checkout
 
       - run: ./gradlew clean build
-
-    general:
-      artifacts:
-        - "./build"
+        post:
+          - mv build $CIRCLE_ARTIFACTS/build

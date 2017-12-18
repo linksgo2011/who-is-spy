@@ -16,5 +16,5 @@ jobs:
       - run: ./gradlew jar
 
       - store_artifacts:
-          path: target/who-is-spy.jar
+          path: ./build/libs/who-is-spy-0.0.1-SNAPSHOT.jar
 

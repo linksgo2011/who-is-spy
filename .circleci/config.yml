@@ -12,9 +12,3 @@ jobs:
       - checkout
 
       - run: ./gradlew clean build
-
-      - run: ./gradlew jar
-
-      - store_artifacts:
-          path: ./build/libs/who-is-spy-0.0.1-SNAPSHOT.jar
-

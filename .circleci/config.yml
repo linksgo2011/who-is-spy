@@ -28,6 +28,14 @@ jobs:
           name: Display current position
           command: pwd
 
+      - run:
+          name: Display those variables
+          command: env
+
+      - run:
+          name: Download jar file
+          command: ./deploy.sh
+
 workflows:
   version: 2
   build-deploy:

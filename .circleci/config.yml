@@ -24,6 +24,10 @@ jobs:
           name: Display whole list
           command: ls -al
 
+      - run:
+          name: Display current position
+          command: pwd
+
 workflows:
   version: 2
   build-deploy:

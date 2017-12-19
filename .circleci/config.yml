@@ -22,7 +22,7 @@ jobs:
     steps:
       - run:
           name: Display whole list
-          command: ls -al
+          command: ls -al ../
 
       - run:
           name: Display current position

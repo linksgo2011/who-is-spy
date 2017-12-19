@@ -25,6 +25,7 @@ jobs:
           command: ls -al
 
 workflows:
+  version: 2
   build-deploy:
     jobs:
       - build

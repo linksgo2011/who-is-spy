@@ -15,3 +15,26 @@ jobs:
 
       - store_artifacts:
           path: build
+
+  deploy:
+      machine: true
+      working_directory: ./build
+      steps:
+        - run:
+            name: Display whole list
+            command: ls -al
+
+        - run:
+            name: Debug aws version
+            command: aws --version
+
+workflows:
+  build-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+#              only: master

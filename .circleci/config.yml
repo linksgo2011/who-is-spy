@@ -17,12 +17,12 @@ jobs:
           path: build
 
   deploy:
-      machine: true
-      working_directory: ./build
-      steps:
-        - run:
-            name: Display whole list
-            command: ls -al
+    machine: true
+    working_directory: ./build
+    steps:
+      - run:
+          name: Display whole list
+          command: ls -al
 
 workflows:
   build-deploy:

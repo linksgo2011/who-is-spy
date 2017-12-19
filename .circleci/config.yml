@@ -24,10 +24,6 @@ jobs:
             name: Display whole list
             command: ls -al
 
-        - run:
-            name: Debug aws version
-            command: aws --version
-
 workflows:
   build-deploy:
     jobs:

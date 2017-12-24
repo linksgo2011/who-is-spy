@@ -46,6 +46,10 @@ jobs:
           command: ls -al & aws --version
 
       - run:
+          name: Change permission for aws.pem
+          command: chmod 0600 .circleci/aws.pem
+
+      - run:
           name: SCP file to instance
           command: scp -i "./.circleci/aws.pem" whoisspy-0.0.1-SNAPSHOT.jar ubuntu@ec2-13-58-162-204.us-east-2.compute.amazonaws.com:/home/ubuntu/workspace/whoisspy-0.0.1-SNAPSHOT.jar
 

@@ -51,7 +51,9 @@ jobs:
 
       - run:
           name: login to target instance
-          command: ssh -i "./.circleci/aws.pem" ubuntu@ec2-13-58-162-204.us-east-2.compute.amazonaws.com '
+          command: |
+
+          ssh -i "./.circleci/aws.pem" ubuntu@ec2-13-58-162-204.us-east-2.compute.amazonaws.com
           ls
           cd workspace
           #kill old instance
@@ -62,7 +64,6 @@ jobs:
 
           # test if it has been started
           netstat -apn | grep 8086
-          '
 
 
 workflows:

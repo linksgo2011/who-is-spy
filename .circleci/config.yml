@@ -68,6 +68,10 @@ jobs:
             # test if it has been started
             netstat -apn | grep 8086'
 
+      - run:
+          name: last step
+          command: pwd
+
 #      - run:
 #          name: kill ssh process
 #          command: |

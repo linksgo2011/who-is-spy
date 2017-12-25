@@ -51,22 +51,23 @@ jobs:
 
       - run:
           name: SCP file to instance
-          command: scp -i "./.circleci/aws.pem" whoisspy-0.0.1-SNAPSHOT.jar ubuntu@ec2-13-58-162-204.us-east-2.compute.amazonaws.com:/home/ubuntu/workspace/whoisspy-0.0.1-SNAPSHOT.jar
+          command: scp -i "./.circleci/aws.pem" whoisspy-0.0.1-SNAPSHOT.jar ubuntu@ec2-18-217-113-62.us-east-2.compute.amazonaws.com:/home/ubuntu/workspace/whoisspy-0.0.1-SNAPSHOT.jar
 
       - run:
           name: login to target instance
           command: |
 
-            ssh -i "./.circleci/aws.pem" ubuntu@ec2-13-58-162-204.us-east-2.compute.amazonaws.com 'ls
+            ssh -i "./.circleci/aws.pem" ubuntu@ec2-18-217-113-62.us-east-2.compute.amazonaws.com 'ls
             cd workspace
             #kill old instance
-            output=$( netstat -apn | grep 8086 | grep LISTEN) && read num1 num2 num3 num4 num5  <<<${output//[^0-9]/ } && kill -9 $num5
+            output=$( netstat -apn | grep 8086 | grep LISTEN) && read num1 num2 num3 num4 num5  <<<${output//[^0-9]/ } && kill -9 $num5 || pwd
 
             # todo start new instance
             java -jar whoisspy-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
 
             # test if it has been started
             netstat -apn | grep 8086'
+
       - run:
           name: kill ssh process
           command: |

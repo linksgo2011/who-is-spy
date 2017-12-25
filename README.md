@@ -8,6 +8,10 @@ A game for team building
 
 https://circleci.com/gh/linksgo2011/who-is-spy
 
+# 入口
+
+http://spygame.printf.cn:10080/
+
 # how to run 
 
 - download h2 

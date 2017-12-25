@@ -68,12 +68,12 @@ jobs:
             # test if it has been started
             netstat -apn | grep 8086'
 
-      - run:
-          name: kill ssh process
-          command: |
-
-            pid=$( ps aux | grep amazonaws | awk '{print $2}' | sort -n | head -n 1 )
-            sleep 5 && kill ${pid} && echo "ssh command is complete"
+#      - run:
+#          name: kill ssh process
+#          command: |
+#
+#            pid=$( ps aux | grep amazonaws | awk '{print $2}' | sort -n | head -n 1 )
+#            sleep 5 && kill ${pid} && echo "ssh command is complete"
 
 workflows:
   version: 2

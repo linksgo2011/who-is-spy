@@ -89,4 +89,4 @@ workflows:
             - build
           filters:
             branches:
-              only: set-ci
+              only: set-db-for-prod

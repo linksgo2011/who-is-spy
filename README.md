@@ -10,14 +10,13 @@ https://circleci.com/gh/linksgo2011/who-is-spy
 
 # 入口
 
-http://spygame.printf.cn:10080/
+http://spygame.printf.cn:8086/
 
 # how to run 
 
 - download h2 
 - run `./h2.sh` 
 - `./gadlew bootrun`
-
 
 # Done
 
@@ -56,13 +55,22 @@ http://spygame.printf.cn:10080/
 - 帮助
     - 游戏规则说明
     - 软件操作指南
-        
-## tech 
-
-- 创建持久的数据库
-- session bug
 
 # deadline
 
 12.25 圣诞节前 
 
+
+# how to contribute this project 
+
+## 工作流程
+
+1.联系我们设置权限
+2.创建Pull request到master分支
+3.检查CI是否通过，然后合并代码
+
+## 可选设置
+
+安装 Zen hub查看卡墙 https://chrome.google.com/webstore/detail/zenhub-for-github/ogcgkffhplmphkaahpmffcafajaocjbd?hl=en-US
+
+  

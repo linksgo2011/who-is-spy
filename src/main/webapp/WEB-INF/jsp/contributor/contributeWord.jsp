@@ -1,6 +1,8 @@
 <%@include file="../header.jsp" %>
-<div>
-    <form action="/addword" name="word" method="POST">
+<div class="container">
+    <div class="alert">${flashSuccessMsg}</div>
+
+    <form name="word" method="POST">
         <div class="row">
             <div class="six columns">
                 <label for="word1">Create <a href=""></a> normal word</label>
@@ -15,9 +17,7 @@
         </div>
         <button class="button-primary">add</button>
     </form>
-    <c:if test="${success=='true'}">
-        <div class="row">successfully added the word!</div>
-    </c:if>
+
     <c:if test="${showWord!='true'}">
         <a class="button" target="_self" href="javascript:void(0)" onclick="window.location.href='/findAllWords'">check
             all the words</a>

@@ -158,6 +158,29 @@ public class HostController {
         return new ModelAndView("redirect:" + referer);
     }
 
+    @RequestMapping(value = "/resetGame", method = RequestMethod.GET)
+    public String resetGame(
+            HttpServletRequest httpServletRequest,
+            HttpSession httpSession,
+            RedirectAttributes redirectAttributes
+    ) throws Exception{
+        Room room = getRoomFromSession(httpSession);
+        List<Gamer> gamers = gamerDao.findByRoom(room.getRoomToken());
+
+        for (Gamer gamer:gamers) {
+            gamer.setStatus("active");
+            gamer.setWord("");
+            gamer.setVoted(false);
+        }
+        gamerDao.save(gamers);
+
+        room.setStatus(Status.WAITING);
+        voteDao.deleteAllByRoom(room.getRoomToken());
+
+        redirectAttributes.addFlashAttribute("flashSuccessMsg", "Game has been reset!");
+        return "redirect:"+httpServletRequest.getHeader("referer");
+    }
+
     /**
      * @param httpServletRequest
      * @param roomToken

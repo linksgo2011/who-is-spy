@@ -86,8 +86,7 @@
             <c:if test="${room.status=='voting'}">
                 <a class="button" target="_self" href="javascript:void(0)" onclick="confirm('Are you sure stop voting and continue game?')?window.location.href='/stopVoting':false">next round</a>
             </c:if>
-
-            <a class="button" target="_self" href="javascript:void(0)" onclick="confirm('Are you sure reset room?')?window.location.href='/resetRoom':false">start vote</a>
+            <a class="button" target="_self" href="javascript:void(0)" onclick="confirm('Are you sure reset game?')?window.location.href='/resetGame':false">reset game</a>
         </div>
 
         <c:if test="${room.status == 'voting'}">

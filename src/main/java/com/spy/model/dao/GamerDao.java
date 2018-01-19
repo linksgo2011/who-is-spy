@@ -22,4 +22,5 @@ public interface GamerDao extends CrudRepository<Gamer, Integer> {
     Gamer findOneByGamerAndRoom(String gamer, String room);
 
     List<Gamer> findByRoomAndStatus(String roomToken, String status);
+
 }

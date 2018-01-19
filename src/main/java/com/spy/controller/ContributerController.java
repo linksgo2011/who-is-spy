@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -30,14 +31,23 @@ public class ContributerController {
         return  "contributor/contributeWord";
     }
 
-    @RequestMapping(value = "/addword", method = RequestMethod.POST)
-    public ModelAndView addWord(@ModelAttribute("word") WordFromContributer word, ModelAndView modelAndView) {
+    @RequestMapping(value = "/contributor", method = RequestMethod.POST)
+    public ModelAndView doAddWord
+            (@ModelAttribute("word") WordFromContributer word,
+             ModelAndView modelAndView,
+             RedirectAttributes redirectAttributes
+            ) {
         Word words = new Word();
         words.setOption1(word.getWord1());
         words.setOption2(word.getWord2());
         wordDao.save(words);
-        modelAndView.addObject("success","true");
-        modelAndView.setViewName("contributor/contributeWord");
+
+        redirectAttributes.addFlashAttribute(
+                "flashSuccessMsg",
+                "successfully added the word!"
+        );
+
+        modelAndView.setViewName("redirect:/contributor");
         return modelAndView;
     }
 
@@ -48,7 +58,5 @@ public class ContributerController {
         modelAndView.addObject("showWord","true");
         modelAndView.setViewName("contributor/contributeWord");
         return modelAndView;
-
     }
-
 }

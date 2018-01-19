@@ -74,3 +74,7 @@ http://spygame.printf.cn:8086/
 安装 Zen hub查看卡墙 https://chrome.google.com/webstore/detail/zenhub-for-github/ogcgkffhplmphkaahpmffcafajaocjbd?hl=en-US
 
   
+## 进入H2 embed的数据管理平台
+
+访问 http://{hostname}/h2-console，进入h2的管理平台然后输入和codebase中同样的配置即可
+

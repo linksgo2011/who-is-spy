@@ -94,12 +94,8 @@ public class GamerController {
         if (gamer == null) {
             return new ModelAndView("redirect:/join?roomToken=" + roomToken);
         }
-        if (gamer.getStatus().equals("out")) {
-            modelAndView.addObject("gamerstatus", "out");
-        } else {
-            modelAndView.addObject("gamerstatus", "active");
-        }
 
+        modelAndView.addObject("gamerstatus", gamer.getStatus());
         modelAndView.addObject("status", room.getStatus());
         modelAndView.addObject("player", gamer);
         modelAndView.addObject("others", others);

@@ -7,7 +7,7 @@
         <div class="welcome">Hello! ${player.gamer}</div>
         <h4 class="center">Status:${status}</h4>
         <c:if test="${gamerstatus =='out'}">
-            <h6>you are out!</h6>
+            <h6 style="color:red;">you are out!</h6>
         </c:if>
         <c:if test="${status=='started'}">
             <hr>

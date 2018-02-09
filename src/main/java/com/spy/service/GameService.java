@@ -61,19 +61,20 @@ public class GameService {
     }
 
     public void initWords() {
-        saveWord("Narinder","Sebastian");
-        saveWord("wine","beer");
-        saveWord("potato","tomato");
-        saveWord("bus","taxi");
-        saveWord("button","link");
-        saveWord("mac","ipad");
-        saveWord("Turbo Drop","roller coaster");
-        saveWord("balloon","bubble");
-        saveWord("beautiful","elegant");
-        saveWord("air","oxygen");
-        saveWord("crab","lobster");
+        saveWord("Narinder", "Sebastian");
+        saveWord("wine", "beer");
+        saveWord("potato", "tomato");
+        saveWord("bus", "taxi");
+        saveWord("button", "link");
+        saveWord("mac", "ipad");
+        saveWord("Turbo Drop", "roller coaster");
+        saveWord("balloon", "bubble");
+        saveWord("beautiful", "elegant");
+        saveWord("air", "oxygen");
+        saveWord("crab", "lobster");
     }
-    private void saveWord(String option1, String option2){
+
+    private void saveWord(String option1, String option2) {
         Word word = new Word();
         word.setOption1(option1);
         word.setOption2(option2);
@@ -88,6 +89,17 @@ public class GameService {
                 Gamer gamer = vote.getGamer();
                 gamer.setStatus("out");
                 gamerDao.save(gamer);
+            }
+        }
+    }
+
+    public void endGame(String roomToken) {
+        List<Gamer> gamers = gamerDao.findByRoom(roomToken);
+        for (Gamer gamer : gamers) {
+            if(gamer.getStatus().equals("out")){
+                gamer.setStatus("fail");
+            }else {
+                gamer.setStatus("win");
             }
         }
     }

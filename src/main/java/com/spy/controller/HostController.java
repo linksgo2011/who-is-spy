@@ -93,6 +93,7 @@ public class HostController {
         List<Gamer> gamers = gamerDao.findByRoom(room.getRoomToken());
         for (Gamer gamer : gamers) {
             gamer.setStatus("active");
+            gamer.setVoted(false);
             gamerDao.save(gamer);
         }
         boolean result = gameService.asignWords(room.getRoomToken());

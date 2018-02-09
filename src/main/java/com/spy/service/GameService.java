@@ -50,10 +50,8 @@ public class GameService {
         int spy = random.nextInt(playerNum);
         Gamer gamer = gamers.get(spy);
         gamers.remove(spy);
-        gamerDao.delete(gamer);
         gamer.setWord(word.getOption1());
         for (Gamer item : gamers) {
-            gamerDao.delete(item);
             item.setWord(word.getOption2());
             gamerDao.save(item);
         }

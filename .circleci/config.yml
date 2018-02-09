@@ -60,7 +60,8 @@ jobs:
             ssh -i "./.circleci/aws.pem" ubuntu@ec2-18-217-113-62.us-east-2.compute.amazonaws.com 'ls
             cd workspace
             #kill old instance
-            output=$( netstat -apn | grep 8086 | grep LISTEN) && read num1 num2 num3 num4 num5  <<<${output//[^0-9]/ } && kill -9 $num5 || pwd
+
+            lsof -i:8086 | awk 'NR>1{print $2}' | xargs kill -9
 
             # todo start new instance
             java -jar -Dspring.profiles.active=prod whoisspy-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &

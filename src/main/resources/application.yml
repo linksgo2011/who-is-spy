@@ -1,10 +1,5 @@
-
 spring:
   datasource:
-#    url: jdbc:h2:tcp://localhost/~/whoisspy
-#    driverClassName: org.h2.Driver
-#    username: sa
-#    password:
     url: jdbc:h2:mem:whoisspy
     driverClassName: org.h2.Driver
     username: idolice

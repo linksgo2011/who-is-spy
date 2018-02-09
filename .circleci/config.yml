@@ -61,7 +61,7 @@ jobs:
             cd workspace
             #kill old instance
 
-            lsof -i:8086 | awk 'NR>1{print $2}' | xargs kill -9
+            output=$( netstat -apn | grep 8086 | grep LISTEN) && read num1 num2 num3 num4 num5  <<<${output//[^0-9]/ } && kill -9 $num5 || pwd
 
             # todo start new instance
             java -jar -Dspring.profiles.active=prod whoisspy-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &

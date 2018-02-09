@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -138,6 +139,7 @@ public class HostController {
 
     @RequestMapping(value = "/stopVoting", method = RequestMethod.GET)
     public ModelAndView stopVoting(
+            RedirectAttributes redirectAttributes,
             HttpServletRequest request,
             HttpSession httpSession
     ) throws Exception {
@@ -147,8 +149,37 @@ public class HostController {
         // TODO before save room we should check previous state
         room.setStatus(Status.STARTED);
         gameService.oneGamerOut(room.getRoomToken());
+        Boolean isOver = checkIfGameOver(room);
+        if(isOver){
+            redirectAttributes.addFlashAttribute("flashSuccessMsg", "game is over!");
+            gameService.endGame(room.getRoomToken());
+        }
         roomDao.save(room);
         return new ModelAndView("redirect:" + referer);
+    }
+
+    private Boolean checkIfGameOver(Room room) {
+        List<Gamer> activeGamers = getActiveGamers(room);
+        for (Gamer gamer : activeGamers) {
+            for (Gamer gamer1 : activeGamers) {
+                if (!gamer.getWord().equals(gamer1.getWord())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private List<Gamer> getActiveGamers(Room room) {
+        List<Gamer> gamers = gamerDao.findByRoom(room.getRoomToken());
+        List<Gamer> gamersActive = new ArrayList<>();
+        for (Gamer gamer : gamers) {
+            if (gamer.getStatus().equals("active")) {
+                gamersActive.add(gamer);
+            }
+        }
+        return gamersActive;
+
     }
 
     @RequestMapping(value = "/remove", method = RequestMethod.GET)

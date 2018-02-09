@@ -9,6 +9,12 @@
         <c:if test="${gamerstatus =='out'}">
             <h6 style="color:red;">you are out!</h6>
         </c:if>
+        <c:if test="${gamerstatus =='win'}">
+            <h6 style="color:green;">you are winner!</h6>
+        </c:if>
+        <c:if test="${gamerstatus =='fail'}">
+            <h6 style="color:red;">you are failure!</h6>
+        </c:if>
         <c:if test="${status=='started'}">
             <hr>
             <h4 class="center">
